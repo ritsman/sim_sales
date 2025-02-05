@@ -4,7 +4,7 @@ import "semantic-ui-css/semantic.min.css";
 import { Link, Outlet } from "react-router-dom";
 import menu_master from "../Consts/Master/Master.const";
 import Breadcrumbs from "../Components/BreadCrumps.jsx";
-import "./Sidebar.css";
+import "./sidebarr.css";
 import {
   Icon,
   Sidebar,
