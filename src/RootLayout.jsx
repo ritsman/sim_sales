@@ -89,5 +89,5 @@ export const Logged = () => {
   const { isAuthenticated } = useAuth();
   let logged = getCurrentUser();
 
-  return <>{logged ? <RootLayout /> : <LoginPage />}</>;
+  return <>{logged ? <RootLayout /> : <RootLayout />}</>;
 };

@@ -25,7 +25,7 @@ export default function Master() {
     if (user === "admin") {
       return <>{comp}</>;
     } else {
-      return <h2>Access Denied </h2>;
+      return <>{comp}</>;
     }
   }
   return <Logged user={userDetails.role} comp={<Outlet />} />;
