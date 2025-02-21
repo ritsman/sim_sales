@@ -144,6 +144,7 @@ import { ToastContainer } from "react-toastify";
 import ForgotPassword from "./Pages/Authentication/ForgotPassword.jsx";
 import ResetPassword from "./Pages/Authentication/ResetPassword.jsx";
 import Gallery from "./Pages/Gallery/Gallery.jsx";
+import GalleryUpload from "./Pages/Gallery/Upload.jsx";
 
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
@@ -419,7 +420,10 @@ const router = createBrowserRouter([
       {
         path: "gallery/",
         element: <Gallery />,
-      
+      },
+      {
+        path: "gallery/upload",
+        element: <GalleryUpload />,
       },
       {
         path: "sales/",

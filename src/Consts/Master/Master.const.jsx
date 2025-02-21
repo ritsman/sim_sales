@@ -137,5 +137,19 @@ const menu_master = {
       nav: "/money/debitnote",
     },
   ],
+  gallery: [
+    {
+      key: 1,
+      name: "Gallery",
+      icon: "address card outline",
+      nav: "/gallery",
+    },
+    {
+      key: 2,
+      name: "Upload",
+      icon: "address card outline",
+      nav: "/gallery/upload",
+    },
+  ],
 };
 export default menu_master;

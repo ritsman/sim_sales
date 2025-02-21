@@ -1,3 +1,4 @@
 .custom-sidebar {
   background-color: #1f2937 !important;
+  min-height: 100vh !important;
 }

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@handsontable/react": "^15.0.1",
     "@syncfusion/ej2-react-calendars": "^25.1.42",
     "@syncfusion/ej2-react-dropdowns": "^24.2.5",
     "@syncfusion/ej2-react-inputs": "^24.2.5",
@@ -17,6 +18,7 @@
     "@syncfusion/ej2-react-schedule": "^24.2.8",
     "autocompleter": "^9.2.0",
     "axios": "^1.6.3",
+    "handsontable": "^15.0.1",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "multer": "^1.4.5-lts.1",

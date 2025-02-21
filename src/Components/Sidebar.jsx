@@ -60,6 +60,8 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         return menu_master.material;
       case "money":
         return menu_master.money;
+      case "gallery":
+        return menu_master.gallery;
       default:
         return menu_items_default;
     }
@@ -76,7 +78,7 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
           vertical
           inverted
           onHide={() => change()}
-          className="custom-sidebar"
+          className="custom-sidebar "
         >
           <Menu.Item as={Link} to="navigate">
             Navigation Pane
