@@ -10,13 +10,14 @@ import db from "./mongodb/mongoose.js";
 app.use(cors());
 app.use(express.urlencoded());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 app.use(router);
 
-app.listen(3010, (err) => {
+app.listen(3000, (err) => {
   if (err) {
     console.log("error in running express server");
     return;
   }
-  console.log("express server is running on port 3010,");
+  console.log("express server is running on port 3000");
 });
