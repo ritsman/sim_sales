@@ -12,6 +12,7 @@ import MaterialRoute from "./MaterialRoute.js";
 import AuthRoute from "./AuthRoute.js";
 import SalesRoute from "./SalesRoute.js";
 import GalleryRoute from "./GalleryRoute.js"
+import MasterRoute from "./MasterRoute.js"
 
 
 router.use("/api/workOrder", WorkOrderRoute);
@@ -19,6 +20,7 @@ router.use("/api/gallery",GalleryRoute)
 router.use("/api/material", MaterialRoute);
 router.use("/api/auth", AuthRoute);
 router.use("/api/sales",SalesRoute);
+router.use("/api/master",MasterRoute);
 
 import {
   productPictures,

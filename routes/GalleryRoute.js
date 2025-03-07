@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { deleteGalleryImages, getGalleryImages, postGalleryImages,updateGallery,uploadGallery } from "../controllers/Gallery/Gallery.controller.js";
+import { createStock, deleteGalleryImages, getGalleryImages, getStock, postGalleryImages,reserveStock,updateGallery,uploadGallery } from "../controllers/Gallery/Gallery.controller.js";
 
 const router = express.Router();
 
@@ -38,6 +38,11 @@ router.delete("/deleteGalleryImage/:id", deleteGalleryImages);
 
 router.post("/uploadGallery", upload.any(), uploadGallery);
 router.put("/updateGallery/:id", upload.any(), updateGallery);
+
+//Stock
+router.put("/createStock",createStock);
+router.get("/getStock",getStock)
+router.post("/reserveStock", reserveStock);
 
 
 export default router;
