@@ -60,6 +60,8 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         return menu_master.material;
       case "money":
         return menu_master.money;
+      case "sales":
+        return menu_master.sales;
       case "gallery":
         return menu_master.gallery;
       default:
@@ -70,7 +72,10 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
   // console.log(menu_items);
   return (
     <>
-      <Sidebar.Pushable as={Segment}>
+      <Sidebar.Pushable
+        as={Segment}
+        style={{ height: "100vh", display: "flex" }}
+      >
         <Sidebar
           as={Menu}
           visible={visible}
@@ -91,10 +96,10 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
             </Menu.Item>
           ))}
         </Sidebar>
-        <Sidebar.Pusher>
-          <Segment basic>
+        <Sidebar.Pusher className="main-content">
+          <Segment basic className="outlet-container">
             {/* <Header as="h4">Data</Header> */}
-            <div className=" w-screen ">
+            <div className=" w-screen px-10 ">
               <Breadcrumbs paths={paths} />
               <Outlet />
             </div>
@@ -102,5 +107,5 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     </>
-  );
+  )
 }

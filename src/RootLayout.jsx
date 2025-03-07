@@ -50,7 +50,7 @@ export default function RootLayout() {
 
   return (
     <>
-      <div className="bg-gray-800 flex items-center justify-between p-4">
+      <div className="bg-[#0d4a2b] flex items-center justify-between p-4">
         <div className="flex items-center">
           <img
             src="https://cdn1.iconfinder.com/data/icons/user-interface-2311/24/menu_open_menu_menu_bar_three_lines_ui-512.png"
@@ -63,12 +63,12 @@ export default function RootLayout() {
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-white text-xl">{user}</span>
-          <button
+          {/* <button
             onClick={handleLogout}
             className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-white text-xl"
           >
             Logout
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="h-screen w-screen flex">
@@ -82,12 +82,12 @@ export default function RootLayout() {
         </div>
       </div>
     </>
-  );
+  )
 }
 
 export const Logged = () => {
   const { isAuthenticated } = useAuth();
   let logged = getCurrentUser();
 
-  return <>{logged ? <RootLayout /> : <RootLayout />}</>;
+  return <>{logged ? <RootLayout /> : <RootLayout />}</>
 };

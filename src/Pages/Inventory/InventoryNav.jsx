@@ -12,7 +12,7 @@ export default function InventoryNav() {
     {
       name: "Product",
       desc: " Listing of all Units of Measurement.",
-      path: "productinventory",
+      path: "productInventory",
     },
   ];
   return (

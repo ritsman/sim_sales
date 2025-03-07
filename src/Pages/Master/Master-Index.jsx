@@ -4,27 +4,45 @@ import { Card, CardGroup } from "semantic-ui-react";
 
 export default function MasterIndex() {
   let cards = [
+    // {
+    //   name: "Party",
+    //   path: "party",
+    //   desc: "Listing of all Customers and Vendors",
+    // },
     {
       name: "Party",
-      path: "party",
+      path: "party1",
       desc: "Listing of all Customers and Vendors",
     },
-    { name: "Unit", path: "unit", desc: "Listing of all Units of Measurement" },
+    // { name: "Unit", path: "unit", desc: "Listing of all Units of Measurement" },
+    { name: "Unit", path: "unit1", desc: "Listing of all Units of Measurement" },
+
     { name: "Item", path: "item", desc: "Listing of all Units of Measurement" },
     { name: "Activity", path: "activity", desc: "Listing of all Activities" },
     { name: "Process", path: "process", desc: "Listing of all the Processes" },
     { name: "Location", path: "location", desc: "Listing of all Locations" },
+    // {
+    //   name: "Group",
+    //   path: "group",
+    //   desc: "Listing of all groups",
+    // },
+    // { name: "Size", path: "size", desc: "Listing of all Units of Measurement" },
+    // {
+    //   name: "Product",
+    //   path: "product",
+    //   desc: "Listing of all Products",
+    // },
+    {
+      name: "Size",
+      path: "size1",
+      desc: "Listing of all Units of Measurement",
+    },
     {
       name: "Group",
-      path: "group",
+      path: "group1",
       desc: "Listing of all groups",
     },
-    { name: "Size", path: "size", desc: "Listing of all Units of Measurement" },
-    {
-      name: "Product",
-      path: "product",
-      desc: "Listing of all Products",
-    },
+    { name: "Product", path: "product1", desc: "Listing of all Products" },
   ];
   return (
     <div>

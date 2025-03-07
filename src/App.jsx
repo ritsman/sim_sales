@@ -111,10 +111,7 @@ import PictureEdit, {
 } from "./Pages/Master/products/PictureEdit";
 
 // import sale modules...
-import Sales, {
-  loader as salesLoader,
-  action as salesAction,
-} from "./Pages/Sales/Sales";
+import Sales from "./Pages/Sales/Sales";
 
 //import of material management
 import Material from "./Pages/MatMgmt/Material";
@@ -145,7 +142,19 @@ import ForgotPassword from "./Pages/Authentication/ForgotPassword.jsx";
 import ResetPassword from "./Pages/Authentication/ResetPassword.jsx";
 import Gallery from "./Pages/Gallery/Gallery.jsx";
 import GalleryUpload from "./Pages/Gallery/Upload.jsx";
-
+import Size1 from "./Pages/Master/Size/Size.jsx";
+import AddSize from "./Pages/Master/Size/AddSize.jsx";
+import Product from "./Pages/Master/Product/Product.jsx";
+import AddProduct from "./Pages/Master/Product/AddProduct.jsx";
+import Group1 from "./Pages/Master/Group/Group.jsx";
+import AddGroup from "./Pages/Master/Group/AddGroup.jsx";
+import Party from "./Pages/Master/Party/Party1.jsx";
+import AddParty from "./Pages/Master/Party/AddParty.jsx";
+import SalesView from "./Pages/Sales/SalesView.jsx";
+import Unit from "./Pages/Master/Unit/Unit.jsx";
+import AddUnit from "./Pages/Master/Unit/AddUnit.jsx";
+import Journal from "./Pages/Money/Journal/Journal.jsx";
+import ProductInventory from "./Pages/Inventory/Product/ProductInventory.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -188,6 +197,15 @@ const router = createBrowserRouter([
             element: <MasterIndex />,
           },
           {
+            path: "party1/",
+            element: <Party />,
+          },
+          {
+            path: "party1/addParty",
+            element: <AddParty />,
+          },
+
+          {
             path: "party/",
             element: <Party2 />,
             loader: partyLoader,
@@ -207,6 +225,14 @@ const router = createBrowserRouter([
             path: "unit",
             element: <Unit2 />,
             loader: unitLoader,
+          },
+          {
+            path: "unit1",
+            element: <Unit />,
+          },
+          {
+            path: "unit1/addUnit",
+            element: <AddUnit />,
           },
           {
             path: "unit/:unitId",
@@ -301,9 +327,27 @@ const router = createBrowserRouter([
             action: groupEditAction,
           },
           {
+            path: "group1",
+            element: <Group1 />,
+          },
+          {
+            path: "group1/addGroup",
+            element: <AddGroup />,
+          },
+          {
             path: "size",
             element: <Size />,
             loader: sizeLoader,
+          },
+          {
+            path: "size1",
+            element: <Size1 />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "size1/addForm",
+            element: <AddSize />,
+            // loader: sizeLoader,
           },
           {
             path: "size/:sizeId",
@@ -315,6 +359,14 @@ const router = createBrowserRouter([
             element: <SizeEdit />,
             loader: sizeEditLoader,
             action: sizeEditAction,
+          },
+          {
+            path: "product1",
+            element: <Product />,
+          },
+          {
+            path: "product1/addProduct",
+            element: <AddProduct />,
           },
           {
             path: "product",
@@ -425,12 +477,20 @@ const router = createBrowserRouter([
         path: "gallery/upload",
         element: <GalleryUpload />,
       },
+      // {
+      //   path: "sales/",
+      //   element: <Sales />,
+      //   loader: salesLoader,
+      //   action: salesAction,
+      // }, //end of sales //end of material management
       {
         path: "sales/",
         element: <Sales />,
-        loader: salesLoader,
-        action: salesAction,
-      }, //end of sales //end of material management
+      },
+      {
+        path: "sales/salesView",
+        element: <SalesView />,
+      },
       {
         path: "workorder/",
         element: <WorkOrder />,
@@ -456,15 +516,10 @@ const router = createBrowserRouter([
             loader: paymentLoader,
             // action: paymentAction,
           },
-          // {
-          //   path: "gsn/",
-          //   element: <GSN />,
-          // },
-          // {
-          //   path: "purchaseorder/",
-          //   element: <PurchaseOrder />,
-          //   action: POAction,
-          // },
+          {
+            path: "journal/",
+            element: <Journal />,
+          },
         ],
       },
       {
@@ -498,6 +553,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <InventoryNav />,
+          },
+          {
+            path: "productInventory",
+            element: <ProductInventory/>,
           },
         ],
       },

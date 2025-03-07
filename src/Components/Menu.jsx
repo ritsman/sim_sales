@@ -9,11 +9,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="dashboard"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "dashboard")}
           >
             Dashboard
@@ -22,11 +24,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="gallery"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "gallery")}
           >
             Gallery
@@ -35,11 +39,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="sales"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "sales")}
           >
             Sales
@@ -48,11 +54,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="workorder"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "workorder")}
           >
             Work Order
@@ -61,11 +69,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="material"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "material")}
           >
             Material
@@ -74,11 +84,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="inventory"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "inventory")}
           >
             Inventory
@@ -87,11 +99,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="finance"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "finance")}
           >
             Finance
@@ -100,11 +114,13 @@ export default function Menubar({ activeItem, handleItemClick }) {
         <NavLink
           to="master"
           className={({ isActive }) =>
-            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+            ` ${
+              isActive ? " bg-[#1b9255]" : " bg-[#126b3e]"
+            }  rounded-md `
           }
         >
           <p
-            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            className=" text-white   hover:bg-[#0c3f26] text-white px-4 py-2 rounded-md"
             onClick={(e) => handleItemClick(e, "master")}
           >
             Master

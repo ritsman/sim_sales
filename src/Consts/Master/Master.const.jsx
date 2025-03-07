@@ -137,6 +137,20 @@ const menu_master = {
       nav: "/money/debitnote",
     },
   ],
+  sales: [
+    {
+      key: 1,
+      name: "Sales",
+      icon: "address card outline",
+      nav: "/sales",
+    },
+    {
+      key: 2,
+      name: "Sales View",
+      icon: "address card outline",
+      nav: "/sales/salesView",
+    },
+  ],
   gallery: [
     {
       key: 1,
