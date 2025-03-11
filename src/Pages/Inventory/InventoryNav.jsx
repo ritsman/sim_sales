@@ -7,7 +7,7 @@ export default function InventoryNav() {
     {
       name: "Item",
       desc: "Listing of all Customers and Vendors",
-      path: "iteminventory",
+      path: "itemInventory",
     },
     {
       name: "Product",

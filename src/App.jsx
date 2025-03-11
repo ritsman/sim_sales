@@ -155,6 +155,12 @@ import Unit from "./Pages/Master/Unit/Unit.jsx";
 import AddUnit from "./Pages/Master/Unit/AddUnit.jsx";
 import Journal from "./Pages/Money/Journal/Journal.jsx";
 import ProductInventory from "./Pages/Inventory/Product/ProductInventory.jsx";
+import Items from "./Pages/Master/Items/Items.jsx";
+import AddItems from "./Pages/Master/Items/AddItems.jsx";
+import Home from "./Pages/Home/Home.jsx";
+import Shipment from "./Pages/Shipment/Shipment.jsx";
+import Scheduler from "./Pages/Scheduler/Scheduler.jsx";
+import ItemsInventory from "./Pages/Inventory/Item/Items.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -181,8 +187,20 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
+        path: "/",
+        element: <Home />,
+      },
+      {
         path: "dashboard/",
         element: <Dashboard />,
+      },
+      {
+        path: "shipment/",
+        element: <Shipment />,
+      },
+      {
+        path: "scheduler/",
+        element: <Scheduler />,
       },
       {
         path: "navigate/",
@@ -245,7 +263,14 @@ const router = createBrowserRouter([
             loader: unitEditLoader,
             action: unitEditAction,
           },
-
+          {
+            path: "item1",
+            element: <Items />,
+          },
+          {
+            path: "item1/addItems",
+            element: <AddItems />,
+          },
           {
             path: "item",
             element: <Item />,
@@ -556,7 +581,11 @@ const router = createBrowserRouter([
           },
           {
             path: "productInventory",
-            element: <ProductInventory/>,
+            element: <ProductInventory />,
+          },
+          {
+            path: "itemInventory",
+            element: <ItemsInventory />,
           },
         ],
       },
@@ -572,7 +601,7 @@ export default function App() {
   return (
     <>
       <ToastContainer />
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </>
-  );
+  )
 }
