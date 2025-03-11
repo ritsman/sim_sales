@@ -7,6 +7,7 @@ import { createProduct, deleteProduct, getProduct, updateProduct } from "../cont
 import { createGroup, deleteGroup, getGroup, updateGroup } from "../controllers/Master/Group.controller.js";
 import { createParty, deleteParty, getParty, updateParty } from "../controllers/Master/Party.controller.js";
 import { createUnit, deleteUnit, getUnit, updateUnit } from "../controllers/Master/Unit.controller.js";
+import { addItemStocks, createItems, deleteItems, getItems, getItemStock, updateItems } from "../controllers/Master/Items.controller.js";
 
 const router = express.Router();
 
@@ -22,6 +23,17 @@ const storage = multer.diskStorage({
 
 // Multer middleware for handling multiple images
 const upload = multer({ storage: storage });
+
+
+// const storage1 = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, path.join(__dirname, "uploads/")); // Ensure "uploads" folder exists
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
+// const upload1 = multer({ storage: storage1 });
 
 // Serve images as static files
 const __dirname = path.resolve();
@@ -69,6 +81,28 @@ router.put("/updateUnit/:id", updateUnit);
 router.get("/getUnit", getUnit);
 router.delete("/deleteUnit/:id", deleteUnit);
 
+//Items
+
+
+
+
+router.post(
+  "/createItems",
+  upload.fields([
+    { name: "image", maxCount: 1 },
+   
+  ]),
+  createItems
+);
+router.put("/updateItems/:id",
+  upload.fields([
+    { name: "image", maxCount: 1 },
+   
+  ]), updateItems);
+router.get("/getItems", getItems);
+router.delete("/deleteItems/:id", deleteItems);
+router.post("/addItemStock",addItemStocks);
+router.get("/getItemStock",getItemStock);
 
 
 
