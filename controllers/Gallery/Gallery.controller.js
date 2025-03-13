@@ -290,4 +290,64 @@ export const getStock = async(req,res)=>{
    } catch (error) {
      res.status(500).json({ message: error.message });
    }
+  
+}
+
+export const getAvailStock = async(req,res)=>{
+    try {
+      const stockData = await Stock.aggregate([
+        { $unwind: "$sizes" }, // Flatten sizes array
+        {
+          $group: {
+            _id: { productId: "$productId", size: "$sizes.size" },
+            totalIn: {
+              $sum: { $cond: [{ $eq: ["$type", "IN"] }, "$sizes.quantity", 0] },
+            },
+            totalOut: {
+              $sum: {
+                $cond: [{ $eq: ["$type", "OUT"] }, "$sizes.quantity", 0],
+              },
+            },
+            totalReserved: {
+              $sum: {
+                $cond: [{ $eq: ["$type", "RESERVED"] }, "$sizes.quantity", 0],
+              },
+            },
+            totalUnreserved: {
+              $sum: {
+                $cond: [{ $eq: ["$type", "UNRESERVED"] }, "$sizes.quantity", 0],
+              },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: "$_id.productId",
+            sizes: {
+              $push: {
+                k: "$_id.size",
+                v: {
+                  $subtract: [
+                    { $add: ["$totalIn", "$totalUnreserved"] },
+                    { $add: ["$totalOut", "$totalReserved"] },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            productId: "$_id",
+            sizes: { $arrayToObject: "$sizes" },
+          },
+        },
+      ]);
+
+      res.json(stockData);
+    } catch (error) {
+      console.error("Error fetching available stock:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
 }

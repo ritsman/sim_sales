@@ -13,8 +13,9 @@ import AuthRoute from "./AuthRoute.js";
 import SalesRoute from "./SalesRoute.js";
 import GalleryRoute from "./GalleryRoute.js"
 import MasterRoute from "./MasterRoute.js"
+import ShipmentRoute from "./ShipmentRoute.js"
 
-
+router.use("/api/shipment",ShipmentRoute)
 router.use("/api/workOrder", WorkOrderRoute);
 router.use("/api/gallery",GalleryRoute)
 router.use("/api/material", MaterialRoute);

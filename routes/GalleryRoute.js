@@ -3,7 +3,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { createStock, deleteGalleryImages, getGalleryImages, getStock, postGalleryImages,reserveStock,updateGallery,uploadGallery } from "../controllers/Gallery/Gallery.controller.js";
+import { createStock, deleteGalleryImages, getAvailStock, getGalleryImages, getStock, postGalleryImages,reserveStock,updateGallery,uploadGallery } from "../controllers/Gallery/Gallery.controller.js";
+import { addProductCollection, createCollection, deleteCollection, getCollection, getProductCollection, removeProductCollection, updateCollection } from "../controllers/Gallery/Collection.controller.js";
 
 const router = express.Router();
 
@@ -42,7 +43,19 @@ router.put("/updateGallery/:id", upload.any(), updateGallery);
 //Stock
 router.put("/createStock",createStock);
 router.get("/getStock",getStock)
+router.get("/getAvailStock",getAvailStock)
 router.post("/reserveStock", reserveStock);
+
+//collection
+router.post("/createCollections",createCollection)
+router.get("/getCollections",getCollection);
+router.put("/updateCollection/:id",updateCollection);
+router.delete("/deleteCollection/:id",deleteCollection);
+
+//product collection
+router.post("/addProductToCollection",addProductCollection);
+router.get("/getProductCollections",getProductCollection);
+router.post("/removeProductFromCollection",removeProductCollection);
 
 
 export default router;
