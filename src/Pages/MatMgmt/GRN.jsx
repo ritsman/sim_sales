@@ -22,12 +22,7 @@ import {
   TableHeaderCell,
   Icon,
 } from "semantic-ui-react";
-import { getPageData } from "../../Double/fun";
-import {
-  MasterUrl,
-  records_per_page,
-} from "../../Consts/Master/MasterUrl.const";
-import { parseInt } from "lodash-es";
+
 
 export async function action({ request, params }) {
   const formData = await request.formData();

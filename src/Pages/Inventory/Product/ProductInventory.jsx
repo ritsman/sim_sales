@@ -91,9 +91,15 @@ const ProductInventory = () => {
           })
         );
 
+          const totalQuantity = sizesArray.reduce(
+            (sum, size) => sum + size.quantity,
+            0
+          );
+
         return {
           ...product,
           sizes: sizesArray.length > 0 ? sizesArray : sizesArray2,
+          totalQuantity,
         };
       });
 
@@ -337,6 +343,7 @@ const ProductInventory = () => {
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </th>
               <th className="py-2 px-3 border text-left">Sizes</th>
+              <th className="py-2 px-3 border">Total Quantity</th>
               {/* <th className="py-2 px-3 border text-left">Actions</th> */}
             </tr>
           </thead>
@@ -357,9 +364,7 @@ const ProductInventory = () => {
                     onMouseEnter={() => setHoveredProduct(product)}
                     onMouseLeave={() => setHoveredProduct(null)}
                   >
-                    <span className="text-blue-600 ">
-                      {product.styleName}
-                    </span>{" "}
+                    <span className="text-blue-600 ">{product.styleName}</span>{" "}
                   </td>
                   <td className="py-2 px-3 border">{product.reference}</td>
                   <td className="py-2 px-3 border">{product.season}</td>
@@ -383,6 +388,7 @@ const ProductInventory = () => {
                       </span>
                     </div>
                   </td>
+                  <td className="py-2 px-3 border">{product.totalQuantity}</td>
                   {/* <td className="py-2 px-3 border">
                     <button
                       onClick={() => handleEdit(product)}

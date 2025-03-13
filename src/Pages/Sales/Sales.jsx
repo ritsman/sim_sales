@@ -322,7 +322,7 @@ const Sales = () => {
     }
 
     if (!hasValidQuantity) {
-      toast.error(
+      alert(
         "At least one selected product must have a quantity greater than 0."
       );
       return;

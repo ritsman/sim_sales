@@ -23,7 +23,6 @@ import AutoComplete from "../Components/Autocomplete";
 
 import ProcessAutoComplete from "./ProcessAutoComplete";
 import { MasterUrl, records_per_page } from "../Consts/Master/MasterUrl.const";
-import { getPageData } from "../Double/fun";
 
 export const getProdDetail = async (style_name) => {
   let data = await axios.post(
