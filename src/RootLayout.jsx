@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { toast } from "react-toastify";
 import LoginPage, { getCurrentUser } from "./Pages/Authentication/Login/Login";
+import ThreeBars from "./Components/icon";
 
 export default function RootLayout() {
   const navigate = useNavigate();
@@ -47,16 +48,15 @@ export default function RootLayout() {
     toast.success("User Logged Out");
     navigate("/");
   }
-
+  function setSideBarVisible(){
+    setVisible(!visible);
+  }
   return (
     <>
-      <div className="bg-[#0d4a2b] flex items-center justify-between p-4">
+      <div className="bg-[#145236] flex items-center justify-between p-4">
         <div className="flex items-center">
-          <img
-            src="https://cdn1.iconfinder.com/data/icons/user-interface-2311/24/menu_open_menu_menu_bar_three_lines_ui-512.png"
-            className="h-10 w-10 cursor-pointer"
-            onClick={() => setVisible(!visible)}
-          />
+         
+          <ThreeBars onClick={setSideBarVisible}/>
         </div>
         <div className=" text-center">
           <Menubar activeItem={activeItem} handleItemClick={handleItemClick} />

@@ -162,6 +162,7 @@ import Shipment from "./Pages/Shipment/Shipment.jsx";
 import Scheduler from "./Pages/Scheduler/Scheduler.jsx";
 import ItemsInventory from "./Pages/Inventory/Item/Items.jsx";
 import Collection from "./Pages/Gallery/Collection.jsx";
+import WOCards from "./Pages/work order/WOCards.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -523,7 +524,8 @@ const router = createBrowserRouter([
       },
       {
         path: "workorder/",
-        element: <WorkOrder />,
+        //element: <WorkOrder />,
+        element: <WOCards />,
         loader: workorderLoader,
       },
       {
