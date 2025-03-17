@@ -10,11 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@syncfusion/ej2-react-calendars": "^25.1.42",
-    "@syncfusion/ej2-react-dropdowns": "^24.2.5",
-    "@syncfusion/ej2-react-inputs": "^24.2.5",
-    "@syncfusion/ej2-react-progressbar": "^24.2.3",
-    "@syncfusion/ej2-react-schedule": "^24.2.8",
+   
     "autocompleter": "^9.2.0",
     "axios": "^1.6.3",
     "jwt-decode": "^4.0.0",
