@@ -53,7 +53,7 @@ const ItemStock = () => {
            return {
              ...item,
              stock: 0,
-             availableStock: stock.availableStock,
+             availableStock: stock?.availableStock ?? 0,
            };
          });
          setItems(a);

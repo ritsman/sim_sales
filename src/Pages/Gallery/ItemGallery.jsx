@@ -58,7 +58,7 @@ const ItemGallery = () => {
 
          return {
            ...product,
-           quantity: quantity,
+           availableStock: quantity?.availableStock ?? 0,
            image: product.image || "https://via.placeholder.com/150",
            collections: productCollections,
          };
@@ -240,7 +240,7 @@ const ItemGallery = () => {
              <p className="text-sm text-gray-600 font-semibold mt-2">
                Total Quantity:{" "}
                <span className="text-blue-600 mr-2 font-bold">
-                 {product.quantity.availableStock}
+                 {product.availableStock}
                </span>
                {product.issueUnit}
              </p>

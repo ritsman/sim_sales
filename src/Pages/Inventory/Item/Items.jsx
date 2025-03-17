@@ -33,7 +33,7 @@ const ItemsInventory = () => {
         );
         return {
           ...item,
-          availableStock: stock.availableStock,
+             availableStock: stock?.availableStock ?? 0,
         };
       });
       console.log(mergedItems);

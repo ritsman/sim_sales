@@ -181,11 +181,22 @@ const getAvailableQuantity = (productId, size) => {
      // Reset input field
      setDispatchData((prev) => ({
        ...prev,
-       [orderNo]: {
-         ...prev[orderNo],
-         [size]: "", // Reset to empty
+       [productId]: {
+         ...prev[productId],
+         [orderNo]: {
+           ...prev[productId]?.[orderNo], // Preserve existing sizes within the same order
+           [size]: "", // Update the dispatch quantity for this size
+         },
        },
      }));
+
+    //  setDispatchData((prev) => ({
+    //    ...prev,
+    //    [orderNo]: {
+    //      ...prev[orderNo],
+    //      [size]: "", // Reset to empty
+    //    },
+    //  }));
 
      // ✅ **Restore available stock to previous state**
      setGroupedProducts((prevGrouped) => {
@@ -252,20 +263,31 @@ const getAvailableQuantity = (productId, size) => {
    });
 
    // ✅ Update input field only when valid
-   setDispatchData((prev) => ({
-     ...prev,
+ setDispatchData((prev) => ({
+   ...prev,
+   [productId]: {
+     ...prev[productId],
      [orderNo]: {
-       ...prev[orderNo],
-       [size]: newDispatchQty,
+       ...prev[productId]?.[orderNo], // Preserve existing sizes within the same order
+       [size]: newDispatchQty, // Update the dispatch quantity for this size
      },
-   }));
+   },
+ }));
+
+  //  setDispatchData((prev) => ({
+  //    ...prev,
+  //    [orderNo]: {
+  //      ...prev[orderNo],
+  //      [size]: newDispatchQty,
+  //    },
+  //  }));
  };
 
 
 
   useEffect(()=>{
-    console.log(stockData)
-  },[stockData])
+    console.log(dispatchData)
+  },[dispatchData])
 
   const handleDispatch = async () => {
     console.log(dispatchDataByProduct);
@@ -564,7 +586,9 @@ const getAvailableQuantity = (productId, size) => {
                                       : "border-red-300 bg-red-50"
                                   }`}
                                   value={
-                                    dispatchData[order.order_no]?.[size] || ""
+                                    dispatchData[order.productsId]?.[
+                                      order.order_no
+                                    ]?.[size] || ""
                                   }
                                   onChange={(e) =>
                                     handleDispatchChange(
