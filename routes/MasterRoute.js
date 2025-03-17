@@ -8,6 +8,8 @@ import { createGroup, deleteGroup, getGroup, updateGroup } from "../controllers/
 import { createParty, deleteParty, getParty, updateParty } from "../controllers/Master/Party.controller.js";
 import { createUnit, deleteUnit, getUnit, updateUnit } from "../controllers/Master/Unit.controller.js";
 import { addItemStocks, createItems, deleteItems, getItems, getItemStock, updateItems } from "../controllers/Master/Items.controller.js";
+import { addActivity, deleteActivity, getActivity, updateActivity } from "../controllers/Master/Activity.controller.js";
+import { addProcess, deleteProcess, getprocess, updateProcess } from "../controllers/Master/Process.controller.js";
 
 const router = express.Router();
 
@@ -100,9 +102,21 @@ router.put("/updateItems/:id",
    
   ]), updateItems);
 router.get("/getItems", getItems);
-router.delete("/deleteItems/:id", deleteItems);
+router.post("/deleteItems", deleteItems);
 router.post("/addItemStock",addItemStocks);
 router.get("/getItemStock",getItemStock);
+
+//activity
+router.post("/addActivity",addActivity);
+router.get("/getActivity",getActivity);
+router.put("/updateActivity/:id",updateActivity);
+router.delete("/deleteActivity/:id",deleteActivity)
+
+//process
+router.post("/addProcess", addProcess);
+router.get("/getProcess", getprocess);
+router.put("/updateProcess/:id", updateProcess);
+router.delete("/deleteProcess/:id", deleteProcess);
 
 
 

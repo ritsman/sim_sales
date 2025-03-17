@@ -9,6 +9,7 @@ const ProductSchema = new mongoose.Schema(
     hsnCode: { type: String, required: true },
     price: { type: Number, required: true },
     size: { type: Object }, // Comes from size dropdown
+    items:{type:Array},
     images: { type: Object, default: "" },
   },
   { timestamps: true }

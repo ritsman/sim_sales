@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { createStock, deleteGalleryImages, getAvailStock, getGalleryImages, getStock, postGalleryImages,reserveStock,updateGallery,uploadGallery } from "../controllers/Gallery/Gallery.controller.js";
-import { addProductCollection, createCollection, deleteCollection, getCollection, getProductCollection, removeProductCollection, updateCollection } from "../controllers/Gallery/Collection.controller.js";
+import { addItemToCollection, addProductCollection, createCollection, createItemCollection, deleteCollection, deleteItemCollection, getCollection, getItemCollection, getItemFromCollection, getProductCollection, removeItemFromCollection, removeProductCollection, updateCollection, updateItemCollection } from "../controllers/Gallery/Collection.controller.js";
 
 const router = express.Router();
 
@@ -46,16 +46,29 @@ router.get("/getStock",getStock)
 router.get("/getAvailStock",getAvailStock)
 router.post("/reserveStock", reserveStock);
 
-//collection
-router.post("/createCollections",createCollection)
-router.get("/getCollections",getCollection);
-router.put("/updateCollection/:id",updateCollection);
-router.delete("/deleteCollection/:id",deleteCollection);
+// product collection
+router.post("/createProductCollections",createCollection)
+router.get("/getProductCollections",getCollection);
+router.put("/updateProductCollection/:id",updateCollection);
+router.delete("/deleteProductCollection/:id",deleteCollection);
 
-//product collection
+//product from collection
 router.post("/addProductToCollection",addProductCollection);
-router.get("/getProductCollections",getProductCollection);
+router.get("/getProductFromCollections",getProductCollection);
 router.post("/removeProductFromCollection",removeProductCollection);
+
+//item collection 
+router.post("/createItemCollections", createItemCollection);
+router.get("/getItemCollections", getItemCollection);
+router.put("/updateItemCollection/:id", updateItemCollection);
+router.delete("/deleteItemCollection/:id", deleteItemCollection);
+
+//item from collection
+router.post("/addItemToCollection", addItemToCollection);
+router.get("/getItemFromCollections", getItemFromCollection);
+router.post("/removeItemFromCollection", removeItemFromCollection);
+
+
 
 
 export default router;

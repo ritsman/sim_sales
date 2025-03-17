@@ -57,17 +57,35 @@ export const getItems = async(req,res)=>{
   }
 }
 
-export const deleteItems = async(req,res)=>{
+export const deleteItems = async (req, res) => {
   try {
-    const deletedItem = await Item.findByIdAndDelete(req.params.id);
-    if (!deletedItem) {
-      return res.status(404).json({ message: "Item not found" });
+    const { itemIds } = req.body; // Expecting an array of item IDs
+
+    if (!itemIds || !Array.isArray(itemIds) || itemIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid request. No items provided for deletion." });
     }
-    res.status(200).json({ message: "Item deleted successfully" });
+
+    const deletedItems = await Item.deleteMany({ _id: { $in: itemIds } });
+
+    if (deletedItems.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "No matching items found for deletion." });
+    }
+
+    res
+      .status(200)
+      .json({
+        message: "Items deleted successfully",
+        deletedCount: deletedItems.deletedCount,
+      });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting item", error });
+    res.status(500).json({ message: "Error deleting items", error });
   }
-}
+};
+
 
 export const addItemStocks = async(req,res)=>{
     try {

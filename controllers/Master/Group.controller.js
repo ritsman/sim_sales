@@ -5,7 +5,7 @@ export const createGroup = async(req,res) => {
 
    if (!existing) {
      let result = new Group({
-       code: req.body.code,
+       selectedItems: req.body.selectedItems,
        groupName: req.body.groupName,
        under: req.body.under,
      });

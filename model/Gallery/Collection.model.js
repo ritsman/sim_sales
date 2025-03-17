@@ -14,8 +14,8 @@ const CollectionSchema = new mongoose.Schema({
   },
 });
 
-const Collection = mongoose.model("Collection", CollectionSchema);
-export default Collection
+const ProductCollection = mongoose.model("ProdCollection", CollectionSchema);
+export default ProductCollection;
 
 
 
@@ -42,4 +42,52 @@ ProductCollectionSchema.index(
   { unique: true }
 );
 
-export const ProductCollection = mongoose.model("ProductCollection", ProductCollectionSchema);
+export const ProductFromCollection = mongoose.model("ProductFromCollection", ProductCollectionSchema);
+
+
+
+
+
+
+const ItemCollectionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export const ItemCollection = mongoose.model("ItemCollection", ItemCollectionSchema);
+  
+
+
+
+const ItemFromCollectionSchema = new mongoose.Schema({
+  itemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  collectionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Collection",
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Create a compound index to prevent duplicate associations
+ItemFromCollectionSchema.index(
+  { itemId: 1, collectionId: 1 },
+  { unique: true }
+);
+
+export const ItemFromCollection = mongoose.model("ItemFromCollection", ItemFromCollectionSchema);

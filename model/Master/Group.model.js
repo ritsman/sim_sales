@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const GroupSchema = new mongoose.Schema({
   groupName: String,
   under: String,
-  code: String,
+  selectedItems:Array
 });
 
 const Group = mongoose.model("Group", GroupSchema);

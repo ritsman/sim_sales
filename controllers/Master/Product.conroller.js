@@ -1,7 +1,7 @@
 import Product from "../../model/Master/Product.model.js";
 export const createProduct = async (req, res) => {
   try {
-    let { styleName, reference, season, category, hsnCode, price, size } =
+    let { styleName, reference, season, category, hsnCode, price, size,items } =
       req.body;
 
     // Extract image paths from uploaded files
@@ -33,6 +33,16 @@ export const createProduct = async (req, res) => {
       }
     }
 
+     if (typeof items === "string") {
+       try {
+         items = JSON.parse(items);
+       } catch (error) {
+         return res
+           .status(400)
+           .json({ error: "Invalid items JSON format", receivedData: items });
+       }
+     }
+
     // Save product to database
     const newProduct = new Product({
       styleName,
@@ -42,6 +52,7 @@ export const createProduct = async (req, res) => {
       hsnCode,
       price,
       size,
+      items,
       images, // Save multiple images
     });
 
@@ -92,7 +103,7 @@ export const deleteProduct = async(req,res)=>{
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    let { styleName, reference, season, category, hsnCode, price, size } =
+    let { styleName, reference, season, category, hsnCode, price, size,items } =
       req.body;
 
     console.log("Request Body:", req.body);
@@ -121,6 +132,18 @@ export const updateProduct = async (req, res) => {
      }
    }
 
+     if (items && typeof items === "string") {
+       try {
+         console.log("Attempting to parse items:", items); // Debugging line
+         items = JSON.parse(items); // Convert string to object
+       } catch (error) {
+         console.error("Error parsing size:", error.message);
+         return res
+           .status(400)
+           .json({ error: "Invalid items JSON format", receivedData: items });
+       }
+     }
+
 
     // Prepare updated fields (only update provided fields)
     const updatedFields = {};
@@ -131,6 +154,8 @@ export const updateProduct = async (req, res) => {
     if (hsnCode) updatedFields.hsnCode = hsnCode;
     if (price) updatedFields.price = price;
     if (size) updatedFields.size = size;
+    if (items) updatedFields.items = items;
+
 
     // If a new image is uploaded, update the image field
     if (req.files) {
