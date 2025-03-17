@@ -20,8 +20,8 @@ const isValidToken = (token) => {
 };
 
 export const getCurrentUser = () => {
-  const token = localStorage.getItem("token");
-  if (token && isValidToken(token)) {
+  const token = localStorage.getItem("users");
+  if (token) {
     console.log("valid token");
     return token;
   }
@@ -42,14 +42,22 @@ const LoginPage = () => {
   }, [userDetails]);
 
   function setLocalStorage(token, name) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", name);
+    // localStorage.setItem("token", token);
+    localStorage.setItem("users", "abc");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLocalStorage();
+  const currentPath = window.location.pathname;
+
+  if (currentPath === "/") {
+    // If already on "/", refresh the page
+    window.location.reload();
+  } else {
+    // Otherwise, navigate to "/"
     navigate("/");
-    // console.log({
+  }    // console.log({
     //   user: email,
     //   password,
     // });

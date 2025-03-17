@@ -13,7 +13,7 @@ export default function RootLayout() {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("dashboard");
   const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(null);
   const { userDetails, setUserDetails, setIsAuthenticated } = useAuth();
 
   const handleItemClick = (e, name) => {
@@ -43,7 +43,7 @@ export default function RootLayout() {
     // setUserDetails({});
     // setIsAuthenticated(false);
     // localStorage.removeItem("token");
-    // localStorage.removeItem("user");
+    localStorage.removeItem("users");
     toast.success("User Logged Out");
     navigate("/login");
   }
@@ -68,7 +68,7 @@ export default function RootLayout() {
           <Menubar activeItem={activeItem} handleItemClick={handleItemClick} />
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-white text-xl">{user}</span>
+          {/* <span className="text-white text-xl">{user}</span> */}
           <button
             onClick={handleLogout}
             className="bg-[#145236] hover:bg-[#0c3f26] px-3 py-2 rounded-md text-white text-xl"
@@ -92,8 +92,17 @@ export default function RootLayout() {
 }
 
 export const Logged = () => {
+    const [user, setUser] = useState(null);
+
   const { isAuthenticated } = useAuth();
+
+    // useEffect(() => {
+    
+    //   let userName = localStorage.getItem("users");
+    //   setUser(userName);
+    // }, [user]);
+
   let logged = getCurrentUser();
 
-  return <>{logged ? <RootLayout /> : <RootLayout />}</>
+  return <>{logged ? <RootLayout /> : <LoginPage />}</>;
 };
