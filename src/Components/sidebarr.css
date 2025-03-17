@@ -1,0 +1,16 @@
+.custom-sidebar {
+  background-color: #0d4a2b !important;
+  min-height: 100vh !important;
+}
+
+.main-content {
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Allows scrolling inside Outlet */
+  display: flex;
+  flex-direction: column;
+}
+
+.outlet-container {
+  flex-grow: 1;
+  overflow-y: auto; /* Enables scrolling inside Outlet */
+}
