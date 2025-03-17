@@ -32,7 +32,7 @@ export default function Menubar({ handleItemClick }) {
         >
           <p
             className={`flex items-center gap-2 text-white px-2 py-1 rounded-md transition-colors duration-200 ${HOVER_COLOR}`}
-{/*             onClick={(e) => handleItemClick(e, name === "home" ? "/" : name)} */}
+            onClick={(e) => handleItemClick(e, name === "home" ? "/" : name)}
           >
             {icon} {name.charAt(0).toUpperCase() + name.slice(1)}
           </p>
