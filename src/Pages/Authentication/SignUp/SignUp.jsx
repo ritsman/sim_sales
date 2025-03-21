@@ -31,8 +31,8 @@ const SignUp = () => {
         let response = await axios.post(
            `${config.API_URL}/api/auth/register`,
           {
-            name: name,
-            user: email,
+            name,
+            email: email,
             password: password,
           }
         );
@@ -47,33 +47,31 @@ const SignUp = () => {
   }
 
   return (
-    <div className="flex items-center justify-center w-screen h-screen pb-10  bg-gray-600">
-      <div className="w-full md:pt-24 pt-20 pb-0 max-w-md">
-        <div className="bg-gray-800 rounded-md flex items-start py-10 justify-center ">
-          <div className="bg-gray-900 rounded-lg shadow-lg md:p-10 p-10 px-12">
-            <div className="flex items-center justify-center mb-6">
-              <div className="bg-gray-700 rounded-full w-20 h-20 flex items-center justify-center">
-                <svg
-                  className="text-gray-400 w-12 h-12"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                  />
-                </svg>
+    <div className="flex items-center justify-center w-screen h-screen bg-white">
+      <div className="w-full md:pt-8 pb-0 max-w-md">
+        <div className="bg-[#0d4a2b] shadow-xl rounded-xl md:px-8 px-6 pb-8 mb-4 border border-gray-200">
+          {/* Logo section */}
+          <div className="flex justify-center pt-8 pb-6">
+            <div className="flex items-center">
+              <div className="text-gray-200 uppercase text-2xl font-bold">
+                Login
               </div>
             </div>
-            <div>
-              <div className="mb-4">
-                <div className="flex items-center bg-gray-800 rounded-md px-3 py-2">
+          </div>
+
+          <form>
+            <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+              {/* <div className="text-green-800 text-xl font-semibold mb-6 text-center">
+                  Login to your account
+                </div> */}
+
+              <div className="mb-5">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Name
+                </label>
+                <div className="flex items-center bg-white rounded-md px-3 py-3 border border-green-600">
                   <svg
-                    className="text-gray-400 w-5 h-5 mr-2"
+                    className="text-green-600 w-5 h-5 mr-3"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -88,17 +86,21 @@ const SignUp = () => {
                   </svg>
                   <input
                     type="text"
-                    value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Full Name"
-                    className="bg-gray-800 text-gray-400 placeholder-gray-500 focus:outline-none w-full"
+                    placeholder="Enter your Email"
+                    className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
               </div>
-              <div className="mb-4">
-                <div className="flex items-center bg-gray-800 rounded-md px-3 py-2">
+
+              {/* Username input */}
+              <div className="mb-5">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Email
+                </label>
+                <div className="flex items-center bg-white rounded-md px-3 py-3 border border-green-600">
                   <svg
-                    className="text-gray-400 w-5 h-5 mr-2"
+                    className="text-green-600 w-5 h-5 mr-3"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -108,47 +110,26 @@ const SignUp = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
                   <input
-                    type="email"
-                    value={email}
+                    type="text"
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    className="bg-gray-800 text-gray-400 placeholder-gray-500 focus:outline-none w-full"
+                    placeholder="Enter your Email"
+                    className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
               </div>
-              <div className="mb-4">
-                <div className="flex items-center bg-gray-800 rounded-md px-3 py-2">
-                  <svg
-                    className="text-gray-400 w-5 h-5 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    className="bg-gray-800 text-gray-400 placeholder-gray-500 focus:outline-none w-full"
-                  />
-                </div>
-              </div>
+
+              {/* Password input */}
               <div className="mb-6">
-                <div className="flex items-center bg-gray-800 rounded-md px-3 py-2">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Password
+                </label>
+                <div className="flex items-center bg-white rounded-md px-3 py-3 border border-green-600">
                   <svg
-                    className="text-gray-400 w-5 h-5 mr-2"
+                    className="text-green-600 w-5 h-5 mr-3"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -163,31 +144,68 @@ const SignUp = () => {
                   </svg>
                   <input
                     type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm Password"
-                    className="bg-gray-800 text-gray-400 placeholder-gray-500 focus:outline-none w-full"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
               </div>
+
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Confirm Password
+                </label>
+                <div className="flex items-center bg-white rounded-md px-3 py-3 border border-green-600">
+                  <svg
+                    className="text-green-600 w-5 h-5 mr-3"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <input
+                    type="password"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Enter your confirm password"
+                    className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
+                  />
+                </div>
+              </div>
+
+              {/* Login button */}
               <button
                 onClick={handleSubmit}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded w-full"
+                className="bg-[#310b6b] hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-full transition duration-200"
               >
-                SIGN UP
+                SIGNUP
               </button>
             </div>
-            <div className="mt-4 text-center">
-              <span className="text-gray-600">Already have an account?</span>{" "}
-              <Link
-                to="/"
-                className="text-indigo-500 hover:text-indigo-700 font-semibold"
-              >
-                Log In
-              </Link>
-            </div>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <span className="text-gray-200 text-sm">
+              Already have an account ?
+            </span>{" "}
+            <Link
+              to="/login"
+              className="text-green-400 hover:text-green-500 text-sm font-medium"
+            >
+              Login
+            </Link>
           </div>
         </div>
+
+        {/* <div className="text-center text-gray-500 text-xs">
+            © 2025 Sales Management System. All rights reserved.
+          </div> */}
       </div>
     </div>
   );

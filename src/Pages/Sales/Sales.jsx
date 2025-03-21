@@ -122,7 +122,16 @@ const Sales = () => {
             return {
               ...product,
               sizes: sizesObject,
-              sizes2: sizesObject2, // Now contains availableStock for each size
+              sizes2: sizesObject2,
+              colors: {
+
+  "#9900ff": "Purple",
+  "#ffff00": "Yellow",
+  "#000000": "Black",
+  "#ffffff": "White",
+  "#ff1493": "Deep Pink",
+  "#8b4513": "Brown",
+}, // Now contains availableStock for each size
               image:
                 product.images?.image1 || "https://via.placeholder.com/150",
               isSelected: false,
@@ -479,6 +488,7 @@ const Sales = () => {
           </div>
 
           {/* Product Grid */}
+          {/* Product Grid */}
           <div className="mt-4 overflow-y-auto max-h-[700px] border rounded-lg p-2">
             <div className="grid grid-cols-3 gap-4">
               {filteredProducts.map((product) => (
@@ -502,6 +512,10 @@ const Sales = () => {
                   <h4 className="text-center font-semibold mt-2">
                     {product.styleName}
                   </h4>
+                  <p className="text-sm text-gray-600">
+                    Price: ₹{product.price}
+                  </p>
+
                   {/* Size & Qty Section */}
                   <div className="border p-3 shadow-sm rounded-md bg-gray-50 my-2">
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">
@@ -525,9 +539,45 @@ const Sales = () => {
                       </div>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Price: ₹{product.price}
-                  </p>
+
+                  {/* Color Palettes with Hover Name in Front of Label */}
+                  {product.colors && Object.keys(product.colors).length > 0 && (
+                    <div className="mt-2 border p-3 shadow-sm rounded-md bg-gray-50">
+                      {/* Color Label & Hover Name */}
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-gray-700">
+                          Available Colors:
+                        </span>
+                        <span
+                          id={`color-name-${product._id}`}
+                          className="text-gray-600 font-semibold"
+                        ></span>
+                      </div>
+
+                      {/* Color Circles */}
+                      <div className="flex flex-wrap justify-start gap-2 mt-1">
+                        {Object.entries(product.colors)
+                          .slice(0, 6) // Show up to 6 colors
+                          .map(([hex, name], index) => (
+                            <div
+                              key={index}
+                              className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer"
+                              style={{ backgroundColor: hex }}
+                              onMouseEnter={() => {
+                                document.getElementById(
+                                  `color-name-${product._id}`
+                                ).innerText = name;
+                              }}
+                              onMouseLeave={() => {
+                                document.getElementById(
+                                  `color-name-${product._id}`
+                                ).innerText = "";
+                              }}
+                            ></div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -606,8 +656,9 @@ const Sales = () => {
                                 />
                                 <span className="text-xs ml-2 text-gray-500">
                                   Avail:{" "}
-                                  {product.sizes[size]?product.sizes[size]:0}
-                                
+                                  {product.sizes[size]
+                                    ? product.sizes[size]
+                                    : 0}
                                 </span>
                               </div>
                             </div>

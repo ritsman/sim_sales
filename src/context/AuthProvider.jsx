@@ -8,10 +8,9 @@ export const AuthProvider = ({ children }) => {
     pwd: "1234",
   });
   const [userDetails, setUserDetails] = useState({
-    name: "",
-    userName: "",
-    id: "",
-    role: "",
+    email: "",
+    userId: "",
+    allowedPages: [],
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);

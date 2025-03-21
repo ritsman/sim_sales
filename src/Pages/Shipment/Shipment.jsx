@@ -534,7 +534,7 @@ const getAvailableQuantity = (productId, size) => {
                                 )}
                               </td>
                             )}
-                            <td className="border px-4 py-2">
+                            <td className="border whitespace-nowrap px-4 py-2">
                               {order.order_no}
                             </td>
                             <td className="border px-4 py-2">

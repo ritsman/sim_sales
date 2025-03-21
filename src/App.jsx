@@ -176,6 +176,8 @@ import AddProcess from "./Pages/Master/Process/AddProcess.jsx";
 import Group from "./Pages/Master/Group/Group.jsx";
 import Group1 from "./Pages/Master/Group/Group1.jsx";
 import AddGroup1 from "./Pages/Master/Group/AddGroup1.jsx";
+import AdminLogin from "./Pages/Admin/AdminLogin.jsx";
+import AdminDashboard from "./Pages/Admin/AdminPanel.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -188,6 +190,15 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <SignUp />,
   },
+  {
+    path: "/admin",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
+  },
+
   {
     path: "/login",
     element: <LoginPage />,

@@ -22,11 +22,13 @@ export default function RootLayout() {
     // navigate(`${name}`);
     // e.stopPropagation();
   };
+  
   useEffect(() => {
-    let tkn = localStorage.getItem("token");
+    console.log(userDetails);
+    let tkn = localStorage.getItem("simToken");
     let token = parseJwt(tkn);
     console.log(token);
-    let userName = localStorage.getItem("user");
+    let userName = localStorage.getItem("simUser");
     setUser(userName);
     setUserDetails(token);
   }, [user]);
@@ -40,10 +42,10 @@ export default function RootLayout() {
   };
 
   function handleLogout() {
-    // setUserDetails({});
-    // setIsAuthenticated(false);
-    // localStorage.removeItem("token");
-    localStorage.removeItem("users");
+    setUserDetails({});
+    setIsAuthenticated(false);
+    localStorage.removeItem("simToken");
+    localStorage.removeItem("simUser");
     toast.success("User Logged Out");
     navigate("/login");
   }
@@ -92,15 +94,8 @@ export default function RootLayout() {
 }
 
 export const Logged = () => {
-    const [user, setUser] = useState(null);
 
   const { isAuthenticated } = useAuth();
-
-    // useEffect(() => {
-    
-    //   let userName = localStorage.getItem("users");
-    //   setUser(userName);
-    // }, [user]);
 
   let logged = getCurrentUser();
 

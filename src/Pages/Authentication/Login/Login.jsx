@@ -20,7 +20,7 @@ const isValidToken = (token) => {
 };
 
 export const getCurrentUser = () => {
-  const token = localStorage.getItem("users");
+  const token = localStorage.getItem("simToken");
   if (token) {
     console.log("valid token");
     return token;
@@ -41,63 +41,44 @@ const LoginPage = () => {
     console.log(userDetails);
   }, [userDetails]);
 
-  function setLocalStorage(token, name) {
-    // localStorage.setItem("token", token);
-    localStorage.setItem("users", "abc");
+  function setLocalStorage(token, email) {
+    localStorage.setItem("simToken", token);
+    localStorage.setItem("simUser", email);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLocalStorage();
-  const currentPath = window.location.pathname;
 
-  if (currentPath === "/") {
-    // If already on "/", refresh the page
-    window.location.reload();
-  } else {
-    // Otherwise, navigate to "/"
-    navigate("/");
-  }    // console.log({
-    //   user: email,
-    //   password,
-    // });
-    // try {
-    //   let response = await axios.post(
-    //    `${config.API_URL}/api/auth/login`,
-    //     {
-    //       user: email,
-    //       password,
-    //     }
-    //   );
-    //   console.log(response.data);
-    //   const authToken = response.data;
-    //   const decodedToken = parseJwt(authToken);
+    try {
+      let response = await axios.post(
+       `${config.API_URL}/api/auth/login`,
+        {
+          email: email,
+          password,
+        }
+      );
+      console.log(response.data);
+      const authToken = response.data.token;
+      const decodedToken = parseJwt(authToken);
 
-    //   if (decodedToken.role == "admin") {
-    //     setIsAdmin(true);
-    //   } else {
-    //     setIsAdmin(false);
-    //   }
-
-    //   setUserDetails({
-    //     name: decodedToken.name,
-    //     userName: decodedToken.user,
-    //     id: decodedToken._id,
-    //     role: decodedToken.role,
-    //   });
-    //   console.log(decodedToken);
-    //   setIsAuthenticated(true);
-    //   setLocalStorage(authToken, decodedToken.name);
-    //   toast.success("successfully Logged In");
-    //   navigate("/");
-    // } catch (error) {
-    //   console.log("login error", error);
-    //   if (error.response) {
-    //     toast.error(error.response.data);
-    //   } else {
-    //     toast.error(error.message);
-    //   }
-    // }
+      setUserDetails({
+        email: decodedToken.email,
+        id: decodedToken.userId,
+        allowedPages: decodedToken.allowedPages,
+      });
+      console.log(decodedToken);
+      setIsAuthenticated(true);
+      setLocalStorage(authToken, decodedToken.email);
+      toast.success("successfully Logged In");
+      navigate("/");
+    } catch (error) {
+      console.log("login error", error);
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.message);
+      }
+    }
   }
 
   const parseJwt = (token) => {
@@ -134,7 +115,7 @@ const LoginPage = () => {
               {/* Username input */}
               <div className="mb-5">
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Username
+                  Email
                 </label>
                 <div className="flex items-center bg-white rounded-md px-3 py-3 border border-green-600">
                   <svg
@@ -153,7 +134,8 @@ const LoginPage = () => {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Enter your username"
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your Email"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
@@ -181,6 +163,7 @@ const LoginPage = () => {
                   </svg>
                   <input
                     type="password"
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
@@ -215,13 +198,15 @@ const LoginPage = () => {
 
           {/* Footer */}
           <div className="mt-6 text-center">
-            <span className="text-gray-200 text-sm">Problems logging in?</span>{" "}
-            <a
-              href="#"
+            <span className="text-gray-200 text-sm">
+              Don't have an account ?
+            </span>{" "}
+            <Link
+              to="/signup"
               className="text-green-400 hover:text-green-500 text-sm font-medium"
             >
-              Contact Support
-            </a>
+              Register Here
+            </Link>
           </div>
         </div>
 
