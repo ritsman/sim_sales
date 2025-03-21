@@ -28,14 +28,10 @@ const Sales = () => {
   const [parties, setParty] = useState([]);
   const [buyerSearch, setBuyerSearch] = useState("");
   const [showBuyerDropdown, setShowBuyerDropdown] = useState(false);
-  const [categories, setCategories] = useState([]); // Store all categories
-  const [selectedCategory, setSelectedCategory] = useState(""); // Selected category
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
-
-  // const filteredProducts = products.filter((product) =>
-  //   product.styleName.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
 
   // Filter products based on search term and selected category
   const filteredProducts = products.filter((product) => {
@@ -58,123 +54,77 @@ const Sales = () => {
         const productData = productResponse.data;
         const stockData = stockResponse.data;
 
-          const stockMap = {};
+        const stockMap = {};
 
-       stockData.forEach((stock) => {
-         stock.sizes.forEach(({ size, quantity }) => {
-           if (!stockMap[stock.productId]) {
-             stockMap[stock.productId] = {};
-           }
+        stockData.forEach((stock) => {
+          stock.sizes.forEach(({ size, quantity }) => {
+            if (!stockMap[stock.productId]) {
+              stockMap[stock.productId] = {};
+            }
 
-           if (!stockMap[stock.productId][size]) {
-             stockMap[stock.productId][size] = {
-               totalIn: 0,
-               totalOut: 0,
-               totalReserved: 0,
-               totalUnreserved: 0, // ✅ Added this field
-             };
-           }
+            if (!stockMap[stock.productId][size]) {
+              stockMap[stock.productId][size] = {
+                totalIn: 0,
+                totalOut: 0,
+                totalReserved: 0,
+                totalUnreserved: 0,
+              };
+            }
 
-           if (stock.type === "IN") {
-             stockMap[stock.productId][size].totalIn += quantity;
-           } else if (stock.type === "OUT") {
-             stockMap[stock.productId][size].totalOut += quantity;
-           } else if (stock.type === "RESERVED") {
-             stockMap[stock.productId][size].totalReserved += quantity;
-           } else if (stock.type === "UNRESERVED") {
-             stockMap[stock.productId][size].totalUnreserved += quantity; // ✅ Deduct unreserved stock
-           }
-         });
-       });
-
-          // Merge stock data into product details
-
-          console.log(stockMap)
-          const mergedData = productData.map((product) => {
-            const sizesData = stockMap[product._id] || {};
-
-            // Convert to UI-friendly format
-             const sizesObject = Object.keys(sizesData).reduce((acc, size) => {
-               acc[size] = Math.max(
-                 sizesData[size].totalIn -
-                   sizesData[size].totalOut -
-                   (sizesData[size].totalReserved -
-                     sizesData[size].totalUnreserved), // ✅ Handle unreserved stock
-                 0 // Ensure stock never goes negative
-               );
-               return acc;
-             }, {});
-
-
-               const sizesObject2 = product.size.sizes.reduce((acc, size) => {
-                 acc[size] = 0;
-                 return acc;
-               }, {});
-
-            //  const sizesObject2 = Object.keys(sizesData).reduce((acc, size) => {
-            //    acc[size] = 0
-            //    return acc;
-            //  }, {});
-
-                          console.log(sizesObject2, "size data");
-
-
-            return {
-              ...product,
-              sizes: sizesObject,
-              sizes2: sizesObject2,
-              colors: {
-
-  "#9900ff": "Purple",
-  "#ffff00": "Yellow",
-  "#000000": "Black",
-  "#ffffff": "White",
-  "#ff1493": "Deep Pink",
-  "#8b4513": "Brown",
-}, // Now contains availableStock for each size
-              image:
-                product.images?.image1 || "https://via.placeholder.com/150",
-              isSelected: false,
-            };
+            if (stock.type === "IN") {
+              stockMap[stock.productId][size].totalIn += quantity;
+            } else if (stock.type === "OUT") {
+              stockMap[stock.productId][size].totalOut += quantity;
+            } else if (stock.type === "RESERVED") {
+              stockMap[stock.productId][size].totalReserved += quantity;
+            } else if (stock.type === "UNRESERVED") {
+              stockMap[stock.productId][size].totalUnreserved += quantity;
+            }
           });
+        });
 
-        // const mergedProducts = productData.map((product) => {
-        //   const stockEntry =
-        //     stockData.find((stock) => stock.productId === product._id) || {};
-        //   let sizes2 = {};
-        //   let sizes = {};
+        // Merge stock data into product details
+        const mergedData = productData.map((product) => {
+          const sizesData = stockMap[product._id] || {};
 
-        //      sizes2 = product.size.sizes.reduce((acc, size) => {
-        //        acc[size] = {
-        //          totalStock: 0,
-        //          reservedStock: 0,
-        //          availableStock: 0,
-        //        };
-        //        return acc;
-        //      }, {});
+          // Convert to UI-friendly format
+          const sizesObject = Object.keys(sizesData).reduce((acc, size) => {
+            acc[size] = Math.max(
+              sizesData[size].totalIn -
+                sizesData[size].totalOut -
+                (sizesData[size].totalReserved -
+                  sizesData[size].totalUnreserved),
+              0 // Ensure stock never goes negative
+            );
+            return acc;
+          }, {});
 
-        //   if (stockEntry && stockEntry.sizes) {
-        //     sizes = stockEntry.sizes;
+          const sizesObject2 = product.size.sizes.reduce((acc, size) => {
+            acc[size] = 0;
+            return acc;
+          }, {});
 
-        //   } else if (product.size?.sizes) {
-         
-        //       sizes = product.size.sizes.reduce((acc, size) => {
-        //         acc[size] = {
-        //           totalStock: 0,
-        //           reservedStock: 0,
-        //           availableStock: 0,
-        //         };
-        //         return acc;
-        //       }, {});
-        //   }
-        //   return {
-        //     ...product,
-        //     sizes2: sizes2,
-        //     sizes:sizes,
-        //     image: product.images?.image1 || "https://via.placeholder.com/150",
-        //     isSelected: false,
-        //   };
-        // });
+          let colorObj = {
+            "#9900ff": "Purple",
+            "#ffff00": "Yellow",
+            "#000000": "Black",
+            "#ffffff": "White",
+            "#ff1493": "Deep Pink",
+            "#8b4513": "Brown",
+          };
+
+          const firstEntry = Object.entries(colorObj)[0];
+
+          return {
+            ...product,
+            sizes: sizesObject,
+            sizes2: sizesObject2,
+            colors: colorObj,
+            selectedColor: { hex: firstEntry[0], name: firstEntry[1] },
+            image: product.images?.image1 || "https://via.placeholder.com/150",
+            isSelected: false,
+          };
+        });
 
         setProducts(mergedData);
         // Extract unique categories
@@ -211,26 +161,42 @@ const Sales = () => {
       (sizeData) => sizeData === 0
     );
 
-    // If all sizes have zero stock, prevent adding the product
-    // if (allSizesZeroStock) {
-    //   toast.error("Cannot add product. No stock available in any size.");
-    //   return;
-    // }
-    if (
-      !product.isSelected &&
-      !selectedProducts.some((p) => p._id === product._id)
-    ) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p._id === product._id ? { ...p, isSelected: true } : p
-        )
-      );
-      setSelectedProducts((prev) => [
-        ...prev,
-        { ...product, sizes: { ...product.sizes } },
-      ]);
+    // Generate a unique ID for this product selection (product ID + color)
+    const productSelectionId = `${product._id}-${product.selectedColor.hex}`;
+
+    // Check if this exact product + color combination already exists in the selection
+    const existingProductIndex = selectedProducts.findIndex(
+      (p) => `${p._id}-${p.selectedColor.hex}` === productSelectionId
+    );
+
+    if (existingProductIndex >= 0) {
+      // If already exists, you may want to update it or notify the user
+      toast.info("This product with the same color is already in your order!");
+      return;
     }
+
+    setSelectedProducts((prev) => [
+      ...prev,
+      {
+        ...product,
+        sizes: { ...product.sizes },
+        selectedColor: product.selectedColor,
+        selectionId: productSelectionId, // Add a unique ID for this selection
+      },
+    ]);
+
     setSearchTerm("");
+  };
+
+  // Handle color selection
+  const handleColorSelect = (productId, hex, colorName) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p._id === productId
+          ? { ...p, selectedColor: { hex, name: colorName } }
+          : p
+      )
+    );
   };
 
   const handleBuyerSelect = (buyer) => {
@@ -239,12 +205,9 @@ const Sales = () => {
     setShowBuyerDropdown(false);
   };
 
-  const removeProductFromOrder = (productId) => {
-    setProducts((prev) =>
-      prev.map((p) => (p._id === productId ? { ...p, isSelected: false } : p))
-    );
+  const removeProductFromOrder = (selectionId) => {
     setSelectedProducts((prev) =>
-      prev.filter((product) => product._id !== productId)
+      prev.filter((product) => product.selectionId !== selectionId)
     );
   };
 
@@ -255,7 +218,6 @@ const Sales = () => {
 
       // Convert quantity to a number
       const enteredQuantity = Number(quantity);
-
 
       // Update available stock
       product.sizes2[size] = enteredQuantity;
@@ -284,7 +246,7 @@ const Sales = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("selected prod",selectedProducts)
+    console.log("selected prod", selectedProducts);
 
     // 1️⃣ Validate if all form fields are filled
     const requiredFields = [
@@ -321,8 +283,8 @@ const Sales = () => {
     let hasValidQuantity = false;
 
     for (let product of selectedProducts) {
-      for (let size in product.sizes) {
-        if (product.sizes[size] > 0) {
+      for (let size in product.sizes2) {
+        if (product.sizes2[size] > 0) {
           hasValidQuantity = true;
           break;
         }
@@ -331,7 +293,7 @@ const Sales = () => {
     }
 
     if (!hasValidQuantity) {
-      alert(
+      toast.error(
         "At least one selected product must have a quantity greater than 0."
       );
       return;
@@ -376,7 +338,6 @@ const Sales = () => {
           delivery_date: "",
         });
         setSelectedProducts([]);
-        setProducts((prev) => prev.map((p) => ({ ...p, isSelected: false })));
       } else {
         toast.error("Not enough stock available!");
       }
@@ -488,59 +449,53 @@ const Sales = () => {
           </div>
 
           {/* Product Grid */}
-          {/* Product Grid */}
           <div className="mt-4 overflow-y-auto max-h-[700px] border rounded-lg p-2">
             <div className="grid grid-cols-3 gap-4">
               {filteredProducts.map((product) => (
                 <div
                   key={product._id}
-                  className={`border-2 border-green-200 p-4 rounded-lg shadow cursor-pointer hover:shadow-lg relative ${
-                    product.isSelected ? "opacity-50 pointer-events-none" : ""
-                  }`}
-                  onClick={() => addProductToOrder(product)}
+                  className="border-2 border-green-200 p-4 rounded-lg shadow relative hover:shadow-lg cursor-pointer"
                 >
-                  {product.isSelected && (
-                    <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                      Selected
-                    </span>
-                  )}
-                  <img
-                    src={`${config.API_URL}${product.image}`}
-                    alt={product.styleName}
-                    className="w-full h-32 object-cover rounded"
-                  />
-                  <h4 className="text-center font-semibold mt-2">
-                    {product.styleName}
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Price: ₹{product.price}
-                  </p>
-
-                  {/* Size & Qty Section */}
-                  <div className="border p-3 shadow-sm rounded-md bg-gray-50 my-2">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                      Size & Qty
+                  {/* Make the image and details clickable to add the product */}
+                  <div onClick={() => addProductToOrder(product)}>
+                    <img
+                      src={`${config.API_URL}${product.image}`}
+                      alt={product.styleName}
+                      className="w-full h-32 object-cover rounded"
+                    />
+                    <h4 className="text-center font-semibold mt-2">
+                      {product.styleName}
                     </h4>
-                    {Object.keys(product.sizes).length === 0 ? (
-                      <p className="text-red-600 font-bold">Out of Stock</p>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                        {Object.keys(product.sizes).map((key) => (
-                          <div
-                            key={key}
-                            className="flex justify-between px-2 py-1 bg-white rounded-md shadow-sm"
-                          >
-                            <span className="font-medium">{key}</span>
-                            <span className="text-blue-600">
-                              {product.sizes[key]}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <p className="text-sm text-gray-600">
+                      Price: ₹{product.price}
+                    </p>
+
+                    {/* Size & Qty Section */}
+                    <div className="border p-3 shadow-sm rounded-md bg-gray-50 my-2">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Size & Qty
+                      </h4>
+                      {Object.keys(product.sizes).length === 0 ? (
+                        <p className="text-red-600 font-bold">Out of Stock</p>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                          {Object.keys(product.sizes).map((key) => (
+                            <div
+                              key={key}
+                              className="flex justify-between px-2 py-1 bg-white rounded-md shadow-sm"
+                            >
+                              <span className="font-medium">{key}</span>
+                              <span className="text-blue-600">
+                                {product.sizes[key]}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Color Palettes with Hover Name in Front of Label */}
+                  {/* Color Palettes with Click Functionality */}
                   {product.colors && Object.keys(product.colors).length > 0 && (
                     <div className="mt-2 border p-3 shadow-sm rounded-md bg-gray-50">
                       {/* Color Label & Hover Name */}
@@ -554,15 +509,22 @@ const Sales = () => {
                         ></span>
                       </div>
 
-                      {/* Color Circles */}
+                      {/* Color Circles - now clickable */}
                       <div className="flex flex-wrap justify-start gap-2 mt-1">
                         {Object.entries(product.colors)
-                          .slice(0, 6) // Show up to 6 colors
+                          .slice(0, 6)
                           .map(([hex, name], index) => (
                             <div
                               key={index}
-                              className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer"
-                              style={{ backgroundColor: hex }}
+                              className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer hover:scale-110 transition-transform"
+                              style={{
+                                backgroundColor: hex,
+                                // Add a highlight for the selected color
+                                boxShadow:
+                                  product.selectedColor?.hex === hex
+                                    ? "0 0 0 2px white, 0 0 0 4px #3b82f6"
+                                    : "",
+                              }}
                               onMouseEnter={() => {
                                 document.getElementById(
                                   `color-name-${product._id}`
@@ -573,11 +535,24 @@ const Sales = () => {
                                   `color-name-${product._id}`
                                 ).innerText = "";
                               }}
+                              onClick={(e) => {
+                                // Stop event propagation to prevent adding product to order
+                                e.stopPropagation();
+                                handleColorSelect(product._id, hex, name);
+                              }}
                             ></div>
                           ))}
                       </div>
                     </div>
                   )}
+
+                  {/* Add to Order button */}
+                  <button
+                    onClick={() => addProductToOrder(product)}
+                    className="w-full mt-3 py-2 rounded-lg text-white font-semibold transition-colors bg-[#310b6b] hover:bg-purple-800"
+                  >
+                    Add to Order
+                  </button>
                 </div>
               ))}
             </div>
@@ -618,21 +593,36 @@ const Sales = () => {
                   <ul className="space-y-4">
                     {selectedProducts.map((product, index) => (
                       <li
-                        key={product._id}
+                        key={product.selectionId}
                         className="p-3 border-2 border-green-200 rounded-lg shadow-md bg-white"
                       >
                         <div className="flex justify-between items-center mb-2">
                           <h4 className="font-semibold">{product.styleName}</h4>
                           <button
                             className="text-red-500 font-bold bg-red-100 px-2 py-1 rounded hover:bg-red-200 text-sm"
-                            onClick={() => removeProductFromOrder(product._id)}
+                            onClick={() =>
+                              removeProductFromOrder(product.selectionId)
+                            }
                           >
                             Remove
                           </button>
                         </div>
 
-                        <div className="text-sm text-gray-600 mb-2">
-                          Price: ₹{product.price}
+                        <div className="text-sm text-gray-600 mb-2 flex justify-between">
+                          <span>Price: ₹{product.price}</span>
+
+                          {/* Display selected color in the order */}
+                          {product.selectedColor && (
+                            <span className="inline-flex items-center">
+                              <span
+                                className="w-3 h-3 rounded-full mr-1"
+                                style={{
+                                  backgroundColor: product.selectedColor.hex,
+                                }}
+                              ></span>
+                              {product.selectedColor.name}
+                            </span>
+                          )}
                         </div>
 
                         <div className="space-y-2">
