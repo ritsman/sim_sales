@@ -1,7 +1,7 @@
 import Product from "../../model/Master/Product.model.js";
 export const createProduct = async (req, res) => {
   try {
-    let { styleName, reference, season, category, hsnCode, price, size,items } =
+    let { styleName, reference, season, category,cost, hsnCode, price,sku,color, size,items } =
       req.body;
 
     // Extract image paths from uploaded files
@@ -18,7 +18,7 @@ export const createProduct = async (req, res) => {
     };
 
     // Validate required fields
-    if (!styleName || !reference || !season || !hsnCode || !price || !size) {
+    if (!styleName || !reference || !season || !hsnCode || !price || !size || !color) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -43,6 +43,19 @@ export const createProduct = async (req, res) => {
        }
      }
 
+         if (typeof color === "string") {
+           try {
+             color = JSON.parse(color);
+           } catch (error) {
+             return res
+               .status(400)
+               .json({
+                 error: "Invalid color JSON format",
+                 receivedData: color,
+               });
+           }
+         }
+
     // Save product to database
     const newProduct = new Product({
       styleName,
@@ -50,6 +63,9 @@ export const createProduct = async (req, res) => {
       season,
       category,
       hsnCode,
+      color,
+      cost,
+      sku,
       price,
       size,
       items,
@@ -103,7 +119,7 @@ export const deleteProduct = async(req,res)=>{
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    let { styleName, reference, season, category, hsnCode, price, size,items } =
+    let { styleName, reference, season, category,cost, hsnCode, price, size,items,color,sku } =
       req.body;
 
     console.log("Request Body:", req.body);
@@ -144,6 +160,18 @@ export const updateProduct = async (req, res) => {
        }
      }
 
+      if (color && typeof color === "string") {
+        try {
+          console.log("Attempting to parse color:", color); // Debugging line
+          color = JSON.parse(color); // Convert string to object
+        } catch (error) {
+          console.error("Error parsing color:", error.message);
+          return res
+            .status(400)
+            .json({ error: "Invalid color JSON format", receivedData: color });
+        }
+      }
+
 
     // Prepare updated fields (only update provided fields)
     const updatedFields = {};
@@ -153,8 +181,13 @@ export const updateProduct = async (req, res) => {
     if (category) updatedFields.category = category;
     if (hsnCode) updatedFields.hsnCode = hsnCode;
     if (price) updatedFields.price = price;
+     if (cost) updatedFields.cost = cost;
     if (size) updatedFields.size = size;
     if (items) updatedFields.items = items;
+    if (color) updatedFields.color = color;
+    if (sku) updatedFields.sku = sku;
+
+
 
 
     // If a new image is uploaded, update the image field

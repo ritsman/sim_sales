@@ -98,3 +98,153 @@ export const getShipment = async(req,res)=>{
    res.status(500).json({ message: "Internal Server Error" });
  }
 }
+export const getDispatched = async (req, res) => {
+  try {
+    const { orderNo } = req.params; // Extract orderNo from request params
+
+    if (!orderNo) {
+      return res.status(400).json({ message: "Order number is required" });
+    }
+
+    // Fetch shipments for the given order number
+    const shipments = await Shipment.find({ order_no: orderNo });
+
+    // if (!shipments || shipments.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No shipments found for this order." });
+    // }
+
+    // Format the shipments properly
+    const formattedShipments = shipments.map((shipment) => ({
+      order_no: shipment.order_no,
+      shipment_date: shipment.shipment_date,
+      dispatch_type: shipment.dispatch_type,
+      products: shipment.products.map((product) => ({
+        productId: product.productId,
+        size: product.size,
+        dispatched_quantity: product.dispatched_quantity,
+      })),
+      createdAt: shipment.createdAt,
+    }));
+
+    res.status(200).json(formattedShipments);
+  } catch (error) {
+    console.error("Error fetching shipments:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+//invoice
+
+import mongoose from "mongoose";
+import { Counter
+ } from "../../model/Shipment/Counter.model.js";
+ import { Invoice } from "../../model/Shipment/Shipment.model.js";
+ import SalesOrder from "../../model/Sales/Sales.model.js";
+ import Party from "../../model/Master/Party.model.js";
+
+const generateInvoiceNumber = async () => {
+  const financialYear =
+    new Date().getMonth() >= 3
+      ? `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`.slice(-2)
+      : `${new Date().getFullYear() - 1}-${new Date().getFullYear()}`.slice(-2);
+
+  // Find and update counter for invoices
+  const counter = await Counter.findOneAndUpdate(
+    { type: "invoice" },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  );
+
+  // Format: INV/FY/0001
+  return `INV/${financialYear}/${counter.seq.toString().padStart(4, "0")}`;
+};
+
+export const createInvoice = async(req,res)=>{
+   
+
+    try {
+      const {
+        orderNo,
+        partyId,
+        deliveryDestination,
+        items,
+        subtotal,
+        gstAmount,
+        totalAmount,
+        invoiceDate,
+        status,
+      } = req.body;
+
+      // Validate required fields
+      if (!orderNo || !partyId || !items || items.length === 0) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Check if order exists
+      const order = await SalesOrder.findOne({ order_no: orderNo })
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      // Check if party exists
+      const party = await Party.findById(partyId);
+      if (!party) {
+        return res.status(404).json({ message: "Party not found" });
+      }
+
+      // Generate invoice number
+      const invoiceNumber = await generateInvoiceNumber();
+
+      // Create new invoice
+      const newInvoice = new Invoice({
+        invoiceNumber,
+        invoiceDate: invoiceDate || new Date(),
+        orderNo,
+        partyId,
+        partyName: party.companyName,
+        partyGstin: party.gst,
+        partyAddress: party.address,
+        deliveryDestination,
+        items: items.map((item) => ({
+          productId: item.productId,
+          styleName: item.styleName,
+          color: item.color,
+          size: item.size,
+          quantity: item.dispatchedQty,
+          price: item.price,
+          gstRate: item.gstRate,
+          gstAmount: item.gstAmount,
+          totalPrice: item.totalPrice,
+        })),
+        subtotal,
+        gstAmount,
+        totalAmount,
+        status: status || "CREATED",
+        createdBy: req.user ? req.user._id : null,
+      });
+
+      await newInvoice.save();
+
+      // Update order to mark items as invoiced if needed
+      // This is optional and depends on your business logic
+      order.invoiceStatus = "INVOICED";
+      order.lastInvoiceDate = new Date();
+      await order.save();
+
+
+      res.status(201).json({
+        message: "Invoice created successfully",
+        invoiceId: newInvoice._id,
+        invoiceNumber,
+      });
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      res.status(500).json({
+        message: "Failed to create invoice",
+        error: error.message,
+      });
+    } 
+}

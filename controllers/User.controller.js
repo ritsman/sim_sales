@@ -3,71 +3,80 @@ import User from "../model/User.models.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+const SUPER_ADMIN_EMAIL="admin@gmail.com";
+
 
 const generateJWTSecret = () => {
   return crypto.randomBytes(32).toString("hex");
 };
 
 export const login = async (req, res) => {
-  console.log("inside login controller", req.body);
+  console.log("login invoked")
+  let JWT_SECRET = generateJWTSecret();
+ try {
+   const { email, password } = req.body;
 
-  const jwtSecret = generateJWTSecret();
+   // Find the user
+   const user = await User.findOne({ email });
+   if (!user) {
+     return res.status(401).json({ message: "Invalid credentials" });
+   }
 
-  try {
-    const { user, password } = req.body;
-    let role = "";
-    if (user == "admin@gmail.com") {
-      role = "admin";
-    } else {
-      role = "user";
-    }
-    const users = await User.findOne({ user });
-    if (!users) {
-      return res.status(400).send("Invalid email or password");
-    } else {
-      const validPassword = await bcrypt.compare(password, users.password);
-      if (!validPassword) {
-        return res.status(400).send("Invalid email or password");
-      } else {
-        const token = jwt.sign(
-          {
-            _id: users._id,
-            role: role,
-            name: users.name,
-            user: users.user,
-          },
-          jwtSecret,
-          {
-            expiresIn: "1h",
-          }
-        );
-        res.send(token);
-      }
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
+   // Check if user is approved
+   if (!user.approved && user.email != SUPER_ADMIN_EMAIL) {
+     return res.status(403).json({ message: "Account pending approval" });
+   }
+
+   // Verify password
+   const isMatch = await bcrypt.compare(password, user.password);
+   if (!isMatch) {
+     return res.status(401).json({ message: "Invalid credentials" });
+   }
+
+   // Update last login
+   user.lastLogin = new Date();
+   await user.save();
+
+   // Create JWT token with user info and allowed pages
+   const token = jwt.sign(
+     {
+       userId: user._id,
+       email: user.email,
+       allowedPages: user.allowedPages,
+     },
+     JWT_SECRET,
+     { expiresIn: "24h" }
+   );
+
+   res.json({ token, allowedPages: user.allowedPages });
+ } catch (error) {
+  console.log(error);
+   res.status(500).json({ message: "Login failed", error: error.message });
+ }
 };
 
 export const register = async (req, res) => {
   console.log(req.body);
   try {
-    const { name, user, password } = req.body;
+    const { email, password,name } = req.body;
 
-    const existingUser = await User.findOne({ user });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).send("User already exists");
+      return res.status(400).send("User already existss");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const users = new User({
       name,
-      user,
+      email,
       password: hashedPassword,
+      approved: false,
+      allowedPages: [],
     });
     await users.save();
-    res.status(201).send("User registered successfully");
+    res
+      .status(201)
+      .send({ message: "Signup request sent. Awaiting admin approval." });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");

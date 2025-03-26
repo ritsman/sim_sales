@@ -16,7 +16,8 @@ const ProductSchema = new mongoose.Schema({
   category: String,
   hsnCode: String,
   price: { type: Number, required: true },
- 
+  sku:String,
+  selectedColor:Object,
   sizes2: {
     type: Object,
   },
@@ -26,12 +27,14 @@ const ProductSchema = new mongoose.Schema({
 
 const SalesOrderSchema = new mongoose.Schema(
   {
-    order_no: { type: String, required: true},
+    order_no: { type: String, required: true },
     buyer: { type: String, required: true },
+    buyerId: { type: String, required: true },
+
     shipment_destination: String,
     whatsapp_number: String,
     shipment_type: String,
-    grandTotal:Number,
+    grandTotal: Number,
     confirm_date: Date,
     entry_date: Date,
     agent: String,

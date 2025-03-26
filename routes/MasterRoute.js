@@ -7,9 +7,11 @@ import { createProduct, deleteProduct, getProduct, updateProduct } from "../cont
 import { createGroup, deleteGroup, getGroup, updateGroup } from "../controllers/Master/Group.controller.js";
 import { createParty, deleteParty, getParty, updateParty } from "../controllers/Master/Party.controller.js";
 import { createUnit, deleteUnit, getUnit, updateUnit } from "../controllers/Master/Unit.controller.js";
-import { addItemStocks, createItems, deleteItems, getItems, getItemStock, updateItems } from "../controllers/Master/Items.controller.js";
+import { addItemStocks, createItems, deleteItems, getDetailedItemStock, getItems, getItemStock, postDetailedItemStock, postItemStock, updateItems } from "../controllers/Master/Items.controller.js";
 import { addActivity, deleteActivity, getActivity, updateActivity } from "../controllers/Master/Activity.controller.js";
 import { addProcess, deleteProcess, getprocess, updateProcess } from "../controllers/Master/Process.controller.js";
+import { createColor, deleteColor, getColor, updateColor } from "../controllers/Master/Color.controller.js";
+import { addSkuProduct, createSkuCollection, deleteSkuCollection, getSkuCollection, getSkuProduct, removeSkuProduct, updateSkuCollection } from "../controllers/Master/Sku.controller.js";
 
 const router = express.Router();
 
@@ -26,16 +28,6 @@ const storage = multer.diskStorage({
 // Multer middleware for handling multiple images
 const upload = multer({ storage: storage });
 
-
-// const storage1 = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, path.join(__dirname, "uploads/")); // Ensure "uploads" folder exists
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}-${file.originalname}`);
-//   },
-// });
-// const upload1 = multer({ storage: storage1 });
 
 // Serve images as static files
 const __dirname = path.resolve();
@@ -103,8 +95,10 @@ router.put("/updateItems/:id",
   ]), updateItems);
 router.get("/getItems", getItems);
 router.post("/deleteItems", deleteItems);
-router.post("/addItemStock",addItemStocks);
+router.post("/addItemStock",postItemStock);
 router.get("/getItemStock",getItemStock);
+router.post("/addDetailedItemStock",postDetailedItemStock);
+router.get("/getDetailedItemStock",getDetailedItemStock);
 
 //activity
 router.post("/addActivity",addActivity);
@@ -117,6 +111,25 @@ router.post("/addProcess", addProcess);
 router.get("/getProcess", getprocess);
 router.put("/updateProcess/:id", updateProcess);
 router.delete("/deleteProcess/:id", deleteProcess);
+
+//color
+router.post("/createColor",createColor );
+router.get("/getColor", getColor);
+router.put("/updateColor/:id",updateColor );
+router.delete("/deleteColor/:id",deleteColor );
+
+//sku
+
+router.post("/createSkuCollections",createSkuCollection)
+router.get("/getSkuCollections",getSkuCollection);
+router.put("/updateSkuCollection/:id",updateSkuCollection);
+router.delete("/deleteSkuCollection/:id",deleteSkuCollection);
+
+router.post("/addSkuProduct",addSkuProduct);
+router.get("/getSkuProduct",getSkuProduct);
+router.post("/removeSkuProduct",removeSkuProduct);
+
+
 
 
 

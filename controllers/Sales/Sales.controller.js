@@ -7,6 +7,7 @@ export const postSales = async(req,res) =>{
       const {
         order_no,
         buyer,
+        buyerId,
         shipment_destination,
         whatsapp_number,
         shipment_type,
@@ -33,6 +34,7 @@ export const postSales = async(req,res) =>{
       const newOrder = new SalesOrder({
         order_no,
         buyer,
+        buyerId,
         shipment_destination,
         whatsapp_number,
         shipment_type,
@@ -65,6 +67,28 @@ export const getSales = async(req,res) =>{
        res.status(500).json({ message: error.message });
      }
 }
+
+export const getOrder = async (req, res) => {
+  try {
+    const { orderNo } = req.params; // Extract orderNo from request params
+
+    if (!orderNo) {
+      return res.status(400).json({ message: "Order number is required" });
+    }
+
+    const order = await SalesOrder.findOne({order_no: orderNo });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 export const cancelOrder = async (req, res) => {

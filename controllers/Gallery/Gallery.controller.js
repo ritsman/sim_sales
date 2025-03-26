@@ -196,17 +196,17 @@ export const reserveStock = async(req,res)=>{
      const transactions = [];
 
      products.forEach((product) => {
-       const sizesArray = Object.entries(product.sizes2).map(
-         ([size, quantity]) => ({
-           size,
-           quantity,
-         })
-       );
+      //  const sizesArray = Object.entries(product.sizes).map(
+      //    ([size, quantity]) => ({
+      //      size,
+      //      quantity,
+      //    })
+      //  );
 
        transactions.push({
-         productId: product._id,
+         productId: product.productId,
          type: "RESERVED",
-         sizes: sizesArray,
+         sizes: product.sizes,
          date: new Date(),
          reference: "Reserved Orders",
        });
