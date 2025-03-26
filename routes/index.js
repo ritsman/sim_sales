@@ -15,6 +15,8 @@ import GalleryRoute from "./GalleryRoute.js"
 import MasterRoute from "./MasterRoute.js"
 import ShipmentRoute from "./ShipmentRoute.js"
 import SuperAdminRoute from "./SuperAdminRoute.js"
+import ProfileRoute from "./ProfileRoute.js"
+
 
 router.use("/api/shipment",ShipmentRoute)
 router.use("/api/workOrder", WorkOrderRoute);
@@ -24,6 +26,7 @@ router.use("/api/auth", AuthRoute);
 router.use("/api/sales",SalesRoute);
 router.use("/api/master",MasterRoute);
 router.use("/api/superAdmin",SuperAdminRoute);
+router.use("/api/profile",ProfileRoute)
 
 import {
   productPictures,

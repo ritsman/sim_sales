@@ -145,3 +145,77 @@ export const getItemStock = async(req,res)=>{
    res.status(500).json({ success: false, message: "Internal Server Error" });
  }
 }
+
+import { ItemsStock } from "../../model/Master/Items.model.js";
+
+
+export const postDetailedItemStock = async (req, res) => {
+  try {
+    const { itemId, stockDetails } = req.body;
+
+    if (!itemId || !Array.isArray(stockDetails) ) {
+      return res.status(400).json({ message: "Invalid data format." });
+    }
+
+    // Calculate total quantity for the given stock details
+    const totalQuantity = stockDetails.reduce((sum, stock) => {
+      return sum + (parseInt(stock.Quantity, 10) || 0); // Default to 0 if not a number
+    }, 0);
+
+    // Create a new document for each submission
+    const newStockEntry = new ItemsStock({
+      itemId,
+      detailedStock: stockDetails,
+      totalQuantity,
+      date: new Date(),
+    });
+
+    await newStockEntry.save();
+
+    res.json({
+      message: "Detailed stock saved successfully!",
+      data: newStockEntry,
+    });
+  } catch (error) {
+    console.error("Error saving detailed stock:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const postItemStock = async(req,res)=>{
+    try {
+      const stockEntries = req.body; // Array of stock objects
+
+      // Insert stock records in bulk
+      await ItemsStock.insertMany(stockEntries);
+
+      res
+        .status(201)
+        .json({ success: true, message: "Stock updated successfully!" });
+    } catch (error) {
+      console.error("Error adding stock:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+
+
+export const getDetailedItemStock = async(req,res)=>{
+  try {
+    const { itemId } = req.params;
+    const stock = await ItemsStock.findOne({ itemId });
+
+    if (!stock) {
+      return res
+        .status(404)
+        .json({ message: "No stock details found for this item." });
+    }
+
+    res.json(stock);
+  } catch (error) {
+    console.error("Error fetching detailed stock:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}

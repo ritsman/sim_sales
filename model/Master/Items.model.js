@@ -50,3 +50,14 @@ const stockTransactionSchema = new mongoose.Schema({
 export const ItemStocks = mongoose.model("ItemStocks", stockTransactionSchema);
 
 
+
+const detailedStockSchema = new mongoose.Schema({
+  itemId: { type: mongoose.Schema.Types.ObjectId, ref: "Item", required: true },
+  detailedStock: { type: Array, required: true }, // Array of stock details
+  totalQuantity: { type: Number, required: true }, // Total quantity of all stock entries
+  date: { type: Date, default: Date.now }, // Automatically set current date
+});
+
+export const ItemsStock = mongoose.model("ItemsStock", detailedStockSchema);
+
+

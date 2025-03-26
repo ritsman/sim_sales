@@ -1,7 +1,7 @@
 import Product from "../../model/Master/Product.model.js";
 export const createProduct = async (req, res) => {
   try {
-    let { styleName, reference, season, category, hsnCode, price,sku,color, size,items } =
+    let { styleName, reference, season, category,cost, hsnCode, price,sku,color, size,items } =
       req.body;
 
     // Extract image paths from uploaded files
@@ -64,6 +64,7 @@ export const createProduct = async (req, res) => {
       category,
       hsnCode,
       color,
+      cost,
       sku,
       price,
       size,
@@ -118,7 +119,7 @@ export const deleteProduct = async(req,res)=>{
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    let { styleName, reference, season, category, hsnCode, price, size,items,color,sku } =
+    let { styleName, reference, season, category,cost, hsnCode, price, size,items,color,sku } =
       req.body;
 
     console.log("Request Body:", req.body);
@@ -180,6 +181,7 @@ export const updateProduct = async (req, res) => {
     if (category) updatedFields.category = category;
     if (hsnCode) updatedFields.hsnCode = hsnCode;
     if (price) updatedFields.price = price;
+     if (cost) updatedFields.cost = cost;
     if (size) updatedFields.size = size;
     if (items) updatedFields.items = items;
     if (color) updatedFields.color = color;
