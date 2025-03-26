@@ -7,7 +7,7 @@ import { createProduct, deleteProduct, getProduct, updateProduct } from "../cont
 import { createGroup, deleteGroup, getGroup, updateGroup } from "../controllers/Master/Group.controller.js";
 import { createParty, deleteParty, getParty, updateParty } from "../controllers/Master/Party.controller.js";
 import { createUnit, deleteUnit, getUnit, updateUnit } from "../controllers/Master/Unit.controller.js";
-import { addItemStocks, createItems, deleteItems, getDetailedItemStock, getItems, getItemStock, postDetailedItemStock, postItemStock, updateItems } from "../controllers/Master/Items.controller.js";
+import { addItemStocks, createItems, deleteDetailedItemStockById, deleteItems, getDetailedItemStock, getDetailedItemStockById, getDetailedItemStockByItemId, getItems, getItemsById, getItemStock, getTotalStockByItemId, getTotalStockForAllItems, postDetailedItemStock, postItemStock, updateItems } from "../controllers/Master/Items.controller.js";
 import { addActivity, deleteActivity, getActivity, updateActivity } from "../controllers/Master/Activity.controller.js";
 import { addProcess, deleteProcess, getprocess, updateProcess } from "../controllers/Master/Process.controller.js";
 import { createColor, deleteColor, getColor, updateColor } from "../controllers/Master/Color.controller.js";
@@ -94,11 +94,23 @@ router.put("/updateItems/:id",
    
   ]), updateItems);
 router.get("/getItems", getItems);
+router.get("/getItems/:id", getItemsById);
+
 router.post("/deleteItems", deleteItems);
 router.post("/addItemStock",postItemStock);
 router.get("/getItemStock",getItemStock);
 router.post("/addDetailedItemStock",postDetailedItemStock);
 router.get("/getDetailedItemStock",getDetailedItemStock);
+router.get("/getDetailedItemStock/:itemId", getDetailedItemStockByItemId);
+router.get("/getDetailedItemStockById/:id", getDetailedItemStockById);
+router.delete("/deleteDetailedItemStockById/:id", deleteDetailedItemStockById);
+router.get("/getTotalItemStock/:itemId", getTotalStockByItemId);
+router.get("/getTotalItemStockForAll", getTotalStockForAllItems);
+
+
+
+
+
 
 //activity
 router.post("/addActivity",addActivity);

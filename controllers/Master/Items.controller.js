@@ -5,10 +5,15 @@ import { ItemStocks } from "../../model/Master/Items.model.js";
 export const createItems = async(req,res)=>{
     console.log(req.files,"files",req.body);
  try {
-    const newItem = new Item({
-      ...req.body,
-      image: req.files ? `/uploads/${req.files.image[0].filename}` : null, // Store image path
-    });
+     const imagePath =
+       req.files && req.files.image && req.files.image.length > 0
+         ? `/uploads/${req.files.image[0].filename}`
+         : null; // Set to null if no image is uploaded
+
+     const newItem = new Item({
+       ...req.body,
+       image: imagePath, // Store image path or null
+     });
 
     const savedItem = await newItem.save();
    res.status(201).json(savedItem);
@@ -56,6 +61,16 @@ export const getItems = async(req,res)=>{
     res.status(500).json({ message: "Error fetching items", error });
   }
 }
+
+export const getItemsById = async (req, res) => {
+  try {
+    const {id} = req.params
+    const items = await Item.findById(id);
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching items", error });
+  }
+};
 
 export const deleteItems = async (req, res) => {
   try {
@@ -151,7 +166,7 @@ import { ItemsStock } from "../../model/Master/Items.model.js";
 
 export const postDetailedItemStock = async (req, res) => {
   try {
-    const { itemId, stockDetails } = req.body;
+    const { itemId, stockDetails,type,unit } = req.body;
 
     if (!itemId || !Array.isArray(stockDetails) ) {
       return res.status(400).json({ message: "Invalid data format." });
@@ -165,6 +180,8 @@ export const postDetailedItemStock = async (req, res) => {
     // Create a new document for each submission
     const newStockEntry = new ItemsStock({
       itemId,
+      type,
+      unit,
       detailedStock: stockDetails,
       totalQuantity,
       date: new Date(),
@@ -219,3 +236,119 @@ export const getDetailedItemStock = async(req,res)=>{
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export const getDetailedItemStockByItemId = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    console.log("item id",itemId)
+    const stockEntries = await ItemsStock.find({ itemId }); // Fetch all stock entries for itemId
+
+    if (!stockEntries.length) {
+      return res
+        .status(404)
+        .json({ message: "No stock details found for this item." });
+    }
+
+    res.json(stockEntries);
+  } catch (error) {
+    console.error("Error fetching detailed stock:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getDetailedItemStockById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(" id", id);
+    const stockEntries = await ItemsStock.findById(id); // Fetch all stock entries for itemId
+
+
+    console.log(stockEntries,"stock")
+
+    res.json(stockEntries);
+  } catch (error) {
+    console.error("Error fetching detailed stock:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteDetailedItemStockById = async(req,res)=>{
+  try {
+    const { id } = req.params;
+    console.log(" id", id);
+    const stockEntries = await ItemsStock.findByIdAndDelete(id); // Fetch all stock entries for itemId
+
+    console.log(stockEntries, "stock");
+
+    res.status(200).json({message:"Item stock entry deleted successfully"});
+  } catch (error) {
+    console.error("Error fetching detailed stock:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export const getTotalStockByItemId = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+
+    // Validate itemId
+    if (!itemId) {
+      return res.status(400).json({ message: "Item ID is required." });
+    }
+
+    // Fetch all stock entries related to the given itemId
+    const stockEntries = await ItemsStock.find({ itemId });
+
+    // if (!stockEntries.length) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No stock entries found for this item." });
+    // }
+
+    // Calculate total quantity by summing up all totalQuantity values
+    const totalQuantity = stockEntries.reduce(
+      (sum, entry) => sum + (entry.totalQuantity || 0),
+      0
+    );
+
+    res.json({ itemId, totalQuantity });
+  } catch (error) {
+    console.error("Error fetching total stock quantity:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getTotalStockForAllItems = async (req, res) => {
+  try {
+    // Fetch all stock entries
+    const stockEntries = await ItemsStock.find();
+
+    if (!stockEntries.length) {
+      return res.status(404).json({ message: "No stock entries found." });
+    }
+
+    // Create an object to store total quantities per itemId
+    const totalStockMap = {};
+
+    // Loop through stock entries and sum totalQuantity for each itemId
+    stockEntries.forEach((entry) => {
+      if (!totalStockMap[entry.itemId]) {
+        totalStockMap[entry.itemId] = 0;
+      }
+      totalStockMap[entry.itemId] += entry.totalQuantity || 0;
+    });
+
+    // Convert the object into an array of { itemId, totalQuantity }
+    const totalStockArray = Object.keys(totalStockMap).map((itemId) => ({
+      itemId,
+      totalQuantity: totalStockMap[itemId],
+    }));
+
+    res.json(totalStockArray);
+  } catch (error) {
+    console.error("Error fetching total stock quantities:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
