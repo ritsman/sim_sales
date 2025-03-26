@@ -178,6 +178,14 @@ import Group1 from "./Pages/Master/Group/Group1.jsx";
 import AddGroup1 from "./Pages/Master/Group/AddGroup1.jsx";
 import AdminLogin from "./Pages/Admin/AdminLogin.jsx";
 import AdminDashboard from "./Pages/Admin/AdminPanel.jsx";
+import Color from "./Pages/Master/Color/Color.jsx";
+import AddColor from "./Pages/Master/Color/AddColor.jsx";
+import SKU from "./Pages/Master/SkuManagement/SKU.jsx";
+import ManageSku from "./Pages/Master/SkuManagement/ManageSku.jsx";
+import Dispatch from "./Pages/Shipment/Dispatch.jsx";
+import Invoice from "./Pages/Shipment/Invoice.jsx";
+import DetailedStock from "./Pages/Master/Items/DetailedStock.jsx";
+import Profile from "./Pages/Profile/Profile.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -225,8 +233,20 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "shipment/",
+        path: "profile/",
+        element: <Profile />,
+      },
+      {
+        path: "shipment",
         element: <Shipment />,
+      },
+      {
+        path: "shipment/dispatch",
+        element: <Dispatch />,
+      },
+      {
+        path: "shipment/invoice",
+        element: <Invoice />,
       },
       {
         path: "scheduler/",
@@ -296,6 +316,10 @@ const router = createBrowserRouter([
           {
             path: "item1",
             element: <Items />,
+          },
+          {
+            path: "item1/detailed-stock",
+            element: <DetailedStock />,
           },
           {
             path: "item1/addItems",
@@ -419,6 +443,16 @@ const router = createBrowserRouter([
           //   loader: sizeLoader,
           // },
           {
+            path: "color",
+            element: <Color />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "color/addColor",
+            element: <AddColor />,
+            // loader: sizeLoader,
+          },
+          {
             path: "size1",
             element: <Size1 />,
             // loader: sizeLoader,
@@ -426,6 +460,16 @@ const router = createBrowserRouter([
           {
             path: "size1/addForm",
             element: <AddSize />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "skuManagement",
+            element: <SKU />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "skuManagement/editSku",
+            element: <ManageSku />,
             // loader: sizeLoader,
           },
           // {

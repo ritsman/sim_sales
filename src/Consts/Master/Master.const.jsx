@@ -233,5 +233,25 @@ const menu_master = {
       nav: "/shipment",
     },
   ],
+  shipment: [
+    {
+      key: 0,
+      name: "Shipment",
+      icon: "address card outline",
+      nav: "/shipment",
+    },
+    {
+      key: 1,
+      name: "Dispatch",
+      icon: "address card outline",
+      nav: "/shipment/dispatch",
+    },
+    {
+      key: 2,
+      name: "Invoice",
+      icon: "address card outline",
+      nav: "/shipment/invoice",
+    },
+  ],
 };
 export default menu_master;

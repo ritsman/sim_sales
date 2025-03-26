@@ -1,17 +1,16 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import config from "../../config";
 import Select from "react-select";
-import { findIndex } from "lodash";
 
 const Sales = () => {
-  const [selectedBuyer , setSelectedBuyer] = useState("")
-  const [selectedBuyerId , setSelectedBuyerId] = useState("");
+  const [selectedBuyer, setSelectedBuyer] = useState("");
   const [formData, setFormData] = useState({
     order_no: "",
     buyer: "",
-    buyerId:"",
     shipment_destination: "",
     whatsapp_number: "",
     shipment_type: "",
@@ -29,7 +28,8 @@ const Sales = () => {
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [parties, setParty] = useState([]);
- 
+  const [buyerSearch, setBuyerSearch] = useState("");
+  const [showBuyerDropdown, setShowBuyerDropdown] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -44,198 +44,108 @@ const Sales = () => {
   });
 
   useEffect(() => {
-        const fetchProducts = async () => {
-          try {
-            const [productResponse, stockResponse, productCollectionsResponse] =
-              await Promise.all([
-                axios.get(`${config.API_URL}/api/master/getProduct/`),
-                axios.get(`${config.API_URL}/api/gallery/getStock/`),
-                axios.get(`${config.API_URL}/api/master/getSkuProduct/`),
-              ]);
+    const fetchProducts = async () => {
+      try {
+        const [productResponse, stockResponse] = await Promise.all([
+          axios.get(`${config.API_URL}/api/master/getProduct/`),
+          axios.get(`${config.API_URL}/api/gallery/getStock/`),
+        ]);
 
-            const productData = productResponse.data || [];
-            const stockData = stockResponse.data || [];
-            const productCollectionsData =
-              productCollectionsResponse.data || [];
+        const productData = productResponse.data;
+        const stockData = stockResponse.data;
 
-          const stockMap = {};
+        const stockMap = {};
 
-          // Map stock data by product ID and size
-          stockData.forEach(({ productId, type, sizes }) => {
-            sizes.forEach(({ size, quantity }) => {
-              if (!stockMap[productId]) {
-                stockMap[productId] = {};
-              }
+        // Map stock data by product ID and size
+        stockData.forEach(({ productId, type, sizes }) => {
+          sizes.forEach(({ size, quantity }) => {
+            if (!stockMap[productId]) {
+              stockMap[productId] = {};
+            }
 
-              if (!stockMap[productId][size]) {
-                stockMap[productId][size] = {
-                  totalIn: 0,
-                  totalOut: 0,
-                  totalReserved: 0,
-                  totalUnreserved: 0,
-                };
-              }
+            if (!stockMap[productId][size]) {
+              stockMap[productId][size] = {
+                totalIn: 0,
+                totalOut: 0,
+                totalReserved: 0,
+                totalUnreserved: 0,
+              };
+            }
 
-              // Update stock calculations
-              if (type === "IN") {
-                stockMap[productId][size].totalIn += quantity;
-              } else if (type === "OUT") {
-                stockMap[productId][size].totalOut += quantity;
-              } else if (type === "RESERVED") {
-                stockMap[productId][size].totalReserved += quantity;
-              } else if (type === "UNRESERVED") {
-                stockMap[productId][size].totalUnreserved += quantity;
-              }
-            });
+            // Update stock calculations
+            if (type === "IN") {
+              stockMap[productId][size].totalIn += quantity;
+            } else if (type === "OUT") {
+              stockMap[productId][size].totalOut += quantity;
+            } else if (type === "RESERVED") {
+              stockMap[productId][size].totalReserved += quantity;
+            } else if (type === "UNRESERVED") {
+              stockMap[productId][size].totalUnreserved += quantity;
+            }
           });
+        });
 
-            // Group products by SKU
-            const groupedProducts = {};
+        // Group products by SKU
+        const groupedProducts = {};
 
-            productData.forEach((product) => {
-              if (!product || !product._id) return;
+        productData.forEach((product) => {
+          const sizesData = stockMap[product._id] || {};
 
-              const sizesData = stockMap[product._id] || {};
-              let productCol = productCollectionsData.find(
-                (item) => item?.productId === product._id
-              );
-
-              let skuId = null;
-
-              if (productCol) {
-                skuId = productCol.skuId;
-              }
-
-              let allrelatedProd = [];
-
-              if (skuId) {
-                allrelatedProd = productCollectionsData.filter(
-                  (item) => item?.skuId === skuId
-                );
-              }
-
-              let variations = [];
-              allrelatedProd.forEach((item) => {
-                if (!item || !item.productId) return;
-                let obj = productData.find(
-                  (item2) => item2?._id === item.productId
-                );
-                if (obj) {
-                  variations.push(obj);
-                }
-              });
-
-            let variation=  variations.map(item=>{
-                 const sizesData = stockMap[product._id] || {};
-
-                 // Calculate available stock per size
-                 const availableStock = Object.keys(sizesData).reduce(
-                   (acc, size) => {
-                     acc[size] = Math.max(
-                       sizesData[size].totalIn -
-                         sizesData[size].totalOut -
-                         (sizesData[size].totalReserved -
-                           sizesData[size].totalUnreserved),
-                       0 // Ensure stock doesn't go negative
-                     );
-                     return acc;
-                   },
-                   {}
-                 );
-
-                 // Ensure sizes object is initialized
-                 const initialSizes = product.size.sizes.reduce((acc, size) => {
-                   acc[size] = 0;
-                   return acc;
-                 }, {});
-                return {
-                  ...item,
-                  sizes:availableStock,
-                  sizes2:initialSizes
-                }
-              })
-
-    
-                  let selectedInd = variations.findIndex(ite =>ite._id == product._id)
-              // If product doesn't exist in groupedProducts, initialize it
-              if (!groupedProducts[product._id]) {
-                groupedProducts[product._id] = {
-                  _id: product._id,
-                  skuId: skuId,
-                  styleName: product.styleName || "Unknown Style",
-                  category: product.category || "Uncategorized",
-                  season: product.season || "",
-                  variations: variation.length > 0 ? variation : [product], // Include at least this product as a variation
-                  selectedIndex: selectedInd >= 0 ? selectedInd : 0, // Default to first variation
-                };
-              }
-            });
-
-            // Convert object to array and ensure variations have all required properties
-            const finalProducts = Object.values(groupedProducts).map(
-              (product) => {
-                // Make sure each variation has properly defined properties
-                const processedVariations = product.variations.map(
-                  (variation) => {
-                    // Ensure color object exists
-                    if (!variation.color) {
-                      variation.color = {
-                        hex: "#CCCCCC",
-                        colorName: "Default",
-                      };
-                    }
-
-                    // Ensure sizes exist
-                    if (!variation.sizes) {
-                      variation.sizes = {};
-
-                      // If product has size info, use it
-                      if (variation.size && variation.size.sizes) {
-                        variation.size.sizes.forEach((size) => {
-                          variation.sizes[size] = 0;
-                        });
-                      }
-                    }
-
-                    // Ensure sizes2 exists (for quantity selection)
-                    if (!variation.sizes2) {
-                      variation.sizes2 = { ...variation.sizes };
-                      // Reset quantities to 0
-                      Object.keys(variation.sizes2).forEach((size) => {
-                        variation.sizes2[size] = 0;
-                      });
-                    }
-
-                    // Ensure image exists
-                    if (!variation.image) {
-                      variation.image =
-                        variation.images?.image1 ||
-                        "https://via.placeholder.com/150";
-                    }
-
-                    return variation;
-                  }
-                );
-
-                return {
-                  ...product,
-                  variations: processedVariations,
-                };
-              }
+          // Calculate available stock per size
+          const availableStock = Object.keys(sizesData).reduce((acc, size) => {
+            acc[size] = Math.max(
+              sizesData[size].totalIn -
+                sizesData[size].totalOut -
+                (sizesData[size].totalReserved -
+                  sizesData[size].totalUnreserved),
+              0 // Ensure stock doesn't go negative
             );
-              console.log(finalProducts)
-            setProducts(finalProducts);
+            return acc;
+          }, {});
 
-            // Extract unique categories
-            const uniqueCategories = [
-              ...new Set(finalProducts.map((p) => p?.category).filter(Boolean)),
-            ];
-            setCategories(uniqueCategories);
-          } catch (error) {
-            console.error("Error fetching products", error);
-            toast.error("Failed to load products");
+          // Ensure sizes object is initialized
+          const initialSizes = product.size.sizes.reduce((acc, size) => {
+            acc[size] = 0;
+            return acc;
+          }, {});
+
+          // If SKU doesn't exist in groupedProducts, initialize it
+          if (!groupedProducts[product.sku]) {
+            groupedProducts[product.sku] = {
+              sku: product.sku,
+              styleName: product.styleName,
+              category: product.category,
+              season: product.season,
+              variations: [], // Store all color variations
+              selectedIndex: 0, // Default to first variation
+            };
           }
-        };
+
+          // Add color variations to the SKU group
+          groupedProducts[product.sku].variations.push({
+            color: product.color,
+            price: product.price,
+            sizes: availableStock,
+            sizes2: initialSizes,
+            image: product.images?.image1 || "https://via.placeholder.com/150",
+            _id: product._id, // Add product ID for stock reservation
+          });
+        });
+
+        // Convert object to array
+        const finalProducts = Object.values(groupedProducts);
+        console.log(finalProducts);
+        setProducts(finalProducts);
+
+        // Extract unique categories
+        const uniqueCategories = [
+          ...new Set(finalProducts.map((p) => p.category)),
+        ];
+        setCategories(uniqueCategories);
+      } catch (error) {
+        console.error("Error fetching products", error);
+      }
+    };
 
     const fetchParty = async () => {
       try {
@@ -243,7 +153,7 @@ const Sales = () => {
           `${config.API_URL}/api/master/getParty/`
         );
         let option = partyRes.data.map((party) => ({
-          value: party,
+          value: party.companyName,
           label: party.companyName,
         }));
         setParty(option);
@@ -260,7 +170,7 @@ const Sales = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addProductToOrder = (product, prodId, selectedIndex) => {
+  const addProductToOrder = (product, sku, selectedIndex) => {
     // Check if all sizes have zero stock
     const isOutOfStock = Object.values(product.sizes).every((qty) => qty === 0);
 
@@ -276,7 +186,7 @@ const Sales = () => {
     };
 
     // Generate a unique ID based on SKU & selected color
-    const productSelectionId = `${prodId}-${product.color.hex}`;
+    const productSelectionId = `${sku}-${product.color.hex}`;
 
     // Check if the same SKU & color combination is already added
     const isProductAlreadyAdded = selectedProducts.some(
@@ -292,8 +202,8 @@ const Sales = () => {
     setSelectedProducts((prev) => [
       ...prev,
       {
-        // skuId: skuId,
-        styleName: products.find((p) => p._id === prodId).styleName,
+        sku: sku,
+        styleName: products.find((p) => p.sku === sku).styleName,
         price: product.price,
         sizes: { ...product.sizes }, // Available stock
         sizes2: { ...product.sizes2 }, // Selected quantities
@@ -308,30 +218,26 @@ const Sales = () => {
     setSearchTerm("");
   };
 
-  const handleColorSelect = (prodIndex, colorIndex) => {
+  const handleColorSelect = (sku, index) => {
     setProducts((prevProducts) =>
-      prevProducts.map((product, index) =>
-        index === prodIndex
-          ? { ...product, selectedIndex: colorIndex }
-          : product
+      prevProducts.map((product) =>
+        product.sku === sku ? { ...product, selectedIndex: index } : product
       )
     );
   };
 
-  useEffect(()=>{console.log(formData)},[formData])
-
   const handleBuyerSelect = (buyers) => {
-    console.log(buyers.value)
-    let buyer = buyers.value
-    setSelectedBuyer(buyer.companyName);
-    setSelectedBuyerId(buyer._id)
-    setFormData((prev)=>({...prev,buyerId:buyer._id}))
-    setFormData((prev) => ({ ...prev, buyer: buyer.companyName }));
-    // setBuyerSearch("");
-    // setShowBuyerDropdown(false);
+    console.log(buyers.value);
+    let buyer = buyers.value;
+    setSelectedBuyer(buyer);
+    setFormData((prev) => ({ ...prev, buyer }));
+    setBuyerSearch("");
+    setShowBuyerDropdown(false);
   };
 
-  useEffect(()=>{console.log(selectedBuyer)},[selectedBuyer])
+  useEffect(() => {
+    console.log(selectedBuyer);
+  }, [selectedBuyer]);
 
   const removeProductFromOrder = (selectionId) => {
     setSelectedProducts((prev) =>
@@ -418,8 +324,6 @@ const Sales = () => {
       if (hasValidQuantity) break; // Exit early if a valid size is found
     }
 
-
-
     if (!hasValidQuantity) {
       toast.error(
         "At least one selected product must have a quantity greater than 0."
@@ -443,7 +347,7 @@ const Sales = () => {
       products: selectedProducts,
       grandTotal,
     };
-    console.log(productsForReservation)
+    console.log(productsForReservation);
     try {
       // Reserve stock first
       const reserveResponse = await axios.post(
@@ -503,18 +407,47 @@ const Sales = () => {
                 value={selectedBuyer}
                 onChange={(selectedOption) => {
                   handleBuyerSelect(selectedOption);
-                  setSelectedBuyer(selectedOption)
+                  setSelectedBuyer(selectedOption);
                 }}
                 placeholder="Search party..."
                 className="w-full"
               />
             ) : (
-
-               <input
+              // <div className="relative">
+              //   <input
+              //     type="text"
+              //     name={key}
+              //     value={buyerSearch || formData[key]}
+              //     onChange={(e) => {
+              //       setBuyerSearch(e.target.value);
+              //       setShowBuyerDropdown(true);
+              //     }}
+              //     className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              //   />
+              //   {showBuyerDropdown && buyerSearch && (
+              //     <ul className="absolute bg-white z-10 border border-green-200 w-full max-h-40 overflow-y-auto shadow-lg rounded-lg">
+              //       {parties
+              //         .filter((party) =>
+              //           party.companyName
+              //             .toLowerCase()
+              //             .includes(buyerSearch.toLowerCase())
+              //         )
+              //         .map((party) => (
+              //           <li
+              //             key={party._id}
+              //             className="p-3 hover:bg-green-50 cursor-pointer transition-colors"
+              //             onClick={() => handleBuyerSelect(party.companyName)}
+              //           >
+              //             {party.companyName}
+              //           </li>
+              //         ))}
+              //     </ul>
+              //   )}
+              // </div>
+              <input
                 type={key.includes("date") ? "date" : "text"}
                 name={key}
                 value={formData[key]}
-                readOnly={key=="buyerId"?true:false}
                 onChange={handleChange}
                 className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
@@ -569,15 +502,13 @@ const Sales = () => {
           {/* Product Grid */}
           <div className="mt-4 overflow-y-auto max-h-[700px] border rounded-lg p-2">
             <div className="grid grid-cols-3 gap-4">
-              {filteredProducts.map((product,prodIndex) => {
+              {filteredProducts.map((product) => {
                 const selectedVariation =
                   product.variations[product.selectedIndex];
 
-              
-
                 return (
                   <div
-                    key={product._id}
+                    key={product.sku}
                     className="border-2 border-green-200 p-4 rounded-lg shadow relative hover:shadow-lg cursor-pointer"
                   >
                     {/* Image & Details Clickable for Adding to Order */}
@@ -630,7 +561,7 @@ const Sales = () => {
                     </div>
 
                     {/* Color Selection */}
-                    {product.variations.length > 0 && (
+                    {product.variations.length > 1 && (
                       <div className="mt-2 border p-3 shadow-sm rounded-md bg-gray-50">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-700">
@@ -648,20 +579,20 @@ const Sales = () => {
                         </div>
 
                         <div className="flex flex-wrap justify-start gap-2 mt-1">
-                          {product.variations.map((variation, index) => ( 
+                          {product.variations.map((variation, index) => (
                             <div
                               key={index}
                               className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer hover:scale-110 transition-transform"
                               style={{
                                 backgroundColor: variation.color.hex,
                                 boxShadow:
-                                 product.selectedIndex === index
+                                  product.selectedIndex === index
                                     ? "0 0 0 2px white, 0 0 0 4px #3b82f6"
                                     : "",
                               }}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleColorSelect(prodIndex, index);
+                                handleColorSelect(product.sku, index);
                               }}
                             ></div>
                           ))}
@@ -674,7 +605,7 @@ const Sales = () => {
                       onClick={() =>
                         addProductToOrder(
                           selectedVariation,
-                          product._id,
+                          product.sku,
                           product.selectedIndex
                         )
                       }
@@ -764,8 +695,9 @@ const Sales = () => {
                               </span>
                               <div className="flex items-center">
                                 <input
-                                  type="text"
-                                 
+                                  type="number"
+                                  min="0"
+                                  max={product.sizes[size]} // Prevent exceeding available stock
                                   value={product.sizes2[size]}
                                   onChange={(e) =>
                                     updateQuantity(index, size, e.target.value)

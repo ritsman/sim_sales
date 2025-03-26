@@ -7,6 +7,11 @@ const Home = () => {
       path: "dashboard",
       desc: "Listing of all Customers and Vendors",
     },
+    {
+      name: "Profile",
+      path: "profile",
+      desc: "Profile",
+    },
     // { name: "Unit", path: "unit", desc: "Listing of all Units of Measurement" },
     {
       name: "Gallery",
@@ -26,9 +31,13 @@ const Home = () => {
     },
 
     { name: "Material", path: "material", desc: "Listing of all Activities" },
-    { name: "Inventory", path: "inventory", desc: "Listing of all the Processes" },
+    {
+      name: "Inventory",
+      path: "inventory",
+      desc: "Listing of all the Processes",
+    },
     { name: "Finance", path: "finance", desc: "Listing of all Locations" },
-   
+
     {
       name: "Master",
       path: "master",

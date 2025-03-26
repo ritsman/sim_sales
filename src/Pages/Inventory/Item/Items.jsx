@@ -194,6 +194,14 @@ const ItemsInventory = () => {
                 {/* {sortConfig.key === "price" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")} */}
               </th>
+              <th
+                className="py-2 px-3 border text-left cursor-pointer hover:bg-gray-200"
+                // onClick={() => requestSort("price")}
+              >
+                Unit{" "}
+                {/* {sortConfig.key === "price" &&
+                  (sortConfig.direction === "ascending" ? "↑" : "↓")} */}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -221,6 +229,7 @@ const ItemsInventory = () => {
                   <td className="py-2 px-3 border">{item.hsnCode}</td>
                   <td className="py-2 px-3 border">{item.rate}</td>
                   <td className="py-2 px-3 border">{item.availableStock}</td>
+                  <td className="py-2 px-3 border">{item.issueUnit}</td>
                 </tr>
               </React.Fragment>
             ))}
@@ -230,15 +239,13 @@ const ItemsInventory = () => {
 
       {filteredItems.length === 0 && (
         <div className="text-center py-4 text-gray-500">
-          No items found.{" "}
-          {searchTerm && "Try adjusting your search criteria."}
+          No items found. {searchTerm && "Try adjusting your search criteria."}
         </div>
       )}
 
       <div className="mt-4 text-gray-600 text-sm">
         Showing {filteredItems.length} of {items.length} Items
-        {selectedItems.length > 0 &&
-          ` (${selectedItems.length} selected)`}
+        {selectedItems.length > 0 && ` (${selectedItems.length} selected)`}
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ export default function RootLayout() {
 
   const handleItemClick = (e, name) => {
     setActiveItem(name);
-    setVisible(true);
+    // setVisible(true);
     // navigate(`${name}`);
     // e.stopPropagation();
   };

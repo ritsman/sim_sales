@@ -82,6 +82,10 @@ const GalleryUpload = () => {
     }
   };
 
+    const colorRenderer = (instance, td, row, col, prop, value) => {
+      td.innerHTML = products[row]["color"]["colorName"];
+    };
+
   // Generate columns dynamically
   const columns = [
     { data: "styleName", type: "text", title: "Style Name", readOnly: true },
@@ -90,7 +94,10 @@ const GalleryUpload = () => {
     { data: "category", type: "text", title: "Category", readOnly: true },
     { data: "hsnCode", type: "text", title: "HSN Code", readOnly: true },
     { data: "price", type: "numeric", title: "Price", readOnly: true },
+    { data: null, renderer: colorRenderer, title: "Color", width: 100 },
   ];
+
+  
 
   if (filteredProducts.length > 0) {
     const sizeColumns = Object.keys(filteredProducts[0].sizes).map((size) => ({

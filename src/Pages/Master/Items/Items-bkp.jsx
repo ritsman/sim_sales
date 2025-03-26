@@ -5,7 +5,7 @@ import { HotTable } from "@handsontable/react";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.min.css";
 import config from "../../../config";
-import DetailedStock from "./DetailedStock";
+import * as XLSX from "xlsx";
 
 registerAllModules();
 
@@ -14,36 +14,35 @@ const Items = () => {
   const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const handleCheckboxChange = (id) => {
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
-    const handleCheckboxChange = (id) => {
-      setSelectedItems((prev) =>
-        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-      );
-    };
+  const handleDeleteSelected = async () => {
+    if (selectedItems.length === 0) {
+      alert("No items selected for deletion");
+      return;
+    }
 
-    const handleDeleteSelected = async () => {
-      if (selectedItems.length === 0) {
-        alert("No items selected for deletion");
-        return;
-      }
+    if (!window.confirm("Are you sure you want to delete selected items?"))
+      return;
 
-      if (!window.confirm("Are you sure you want to delete selected items?"))
-        return;
+    console.log(selectedItems);
 
-      console.log(selectedItems)
-
-      try {
-        await axios.post(`${config.API_URL}/api/master/deleteItems`, {
-          itemIds: selectedItems,
-        });
-        alert("Items deleted successfully");
-        setSelectedItems([]);
-        fetchItems();
-      } catch (error) {
-        console.error("Error deleting items:", error);
-        alert("Failed to delete items.");
-      }
-    };
+    try {
+      await axios.post(`${config.API_URL}/api/master/deleteItems`, {
+        itemIds: selectedItems,
+      });
+      alert("Items deleted successfully");
+      setSelectedItems([]);
+      fetchItems();
+    } catch (error) {
+      console.error("Error deleting items:", error);
+      alert("Failed to delete items.");
+    }
+  };
 
   // Function to handle stock changes in the table
   const handleAfterChange = (changes, source) => {
@@ -60,53 +59,37 @@ const Items = () => {
     }
   };
 
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get(
-          `${config.API_URL}/api/master/getItems`
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get(`${config.API_URL}/api/master/getItems`);
+      const response2 = await axios.get(
+        `${config.API_URL}/api/master/getItemStock`
+      );
+
+      console.log(response2.data.stockData);
+
+      let a = response.data.map((item) => {
+        let stock = response2.data.stockData.find(
+          (stock) => stock.itemId == item._id
         );
-        const response2 = await axios.get(
-          `${config.API_URL}/api/master/getItemStock`
-        );
 
-        console.log(response2.data.stockData);
+        console.log(stock);
 
-        let a = response.data.map((item) => {
-          let stock = response2.data.stockData.find(
-            (stock) => stock.itemId == item._id
-          );
-
-          console.log(stock);
-
-          return {
-            ...item,
-            stock: 0,
-            availableStock: stock?.availableStock ?? 0,
-          };
-        });
-        setItems(a);
-      } catch (error) {
-        console.error("Error fetching items:", error);
-      }
-    };
-
-  useEffect(() => {
-
-    fetchItems();
-  }, []);
-
-
-  const handleDetailedStockClick = (item) => {
-    navigate("detailed-stock", {
-      state: {
-        itemId: item._id,
-        itemName: item.itemName,
-        itemType: item.itemType,
-        itemColor: item.itemColor,
-      },
-    });
+        return {
+          ...item,
+          stock: 0,
+          availableStock: stock?.availableStock ?? 0,
+        };
+      });
+      setItems(a);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
   };
 
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   const columns = [
     {
@@ -131,24 +114,24 @@ const Items = () => {
     { data: "rate", type: "numeric", title: "Price" },
     { data: "issueUnit", type: "text", title: "Issue Unit" },
     { data: "bufferUnit", type: "numeric", title: "Buffer Unit" },
+    // { data: "openingStock", type: "numeric", title: "Opening Stock" },
+    // { data: "purchaseUnit", type: "text", title: "Purchase Unit" },
+    // {
+    //   data: "purchaseIssueRatio",
+    //   type: "numeric",
+    //   title: "Purchase-Issue Ratio",
+    // },
+    // { data: "moq", type: "numeric", title: "MOQ" },
+    // { data: "msc1", type: "numeric", title: "MSC1" },
+    // { data: "msc2", type: "numeric", title: "MSC2" },
     { data: "specification", type: "text", title: "Specification" },
     { data: "user", type: "text", title: "User" },
     { data: "stock", type: "text", title: "add stocks" },
-    {
-      data: "detailedStock",
-      renderer: function (instance, td, row) {
-        td.innerHTML = `<button class="px-3 py-1 m-1 bg-blue-800 text-white rounded hover:bg-green-600">Add detailed stock</button>`;
-        td.querySelector("button").addEventListener("click", () => {
-          handleDetailedStockClick(items[row]);
-        });
-      },
-      title: "Detailed stocks",
-    },
-
-
     { data: "availableStock", type: "text", title: "Available Stock" },
     { data: "issueUnit", type: "text", title: "Unit" },
 
+    // { data: "createdAt.$date", type: "text", title: "Created At" },
+    // { data: "updatedAt.$date", type: "text", title: "Updated At" },
     {
       data: "actions",
       renderer: function (instance, td, row) {
@@ -162,35 +145,27 @@ const Items = () => {
     },
   ];
 
-  const handleSubmitStock = async() => {
-      // let stocksss = items.map(item=>{
-      //   return {
-      //     itemId: item._id,
-      //     type: "IN",
-      //     quantity: item.stock,
-      //   };
-      // })
-         let stocksss = items.map((item) => {
-           return {
-             itemId: item._id,
-             stockDetails: [],
-             totalQuantity: item.stock,
-           };
-         });
-      console.log(stocksss);
-     try {
-    const response = await axios.post(
-      `${config.API_URL}/api/master/addItemStock`,
-      stocksss
-    );
-    console.log(response)
-    alert("Stock updated successfully!");
-    fetchItems();
-  } catch (error) {
-    console.error("Error saving stock:", error);
-    alert("Failed to update stock.");
-  }
-
+  const handleSubmitStock = async () => {
+    let stocksss = items.map((item) => {
+      return {
+        itemId: item._id,
+        type: "IN",
+        quantity: item.stock,
+      };
+    });
+    console.log(stocksss);
+    try {
+      const response = await axios.post(
+        `${config.API_URL}/api/master/addItemStock`,
+        stocksss
+      );
+      console.log(response);
+      alert("Stock updated successfully!");
+      fetchItems();
+    } catch (error) {
+      console.error("Error saving stock:", error);
+      alert("Failed to update stock.");
+    }
   };
 
   return (

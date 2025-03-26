@@ -45,15 +45,25 @@ export default function MasterIndex() {
     {
       name: "Size",
       path: "size1",
-      desc: "Listing of all Units of Measurement",
+      desc: "Listing of all Sizes",
     },
+    {
+      name: "Color",
+      path: "color",
+      desc: "Listing of all Colors",
+    },
+    {
+      name: "SKU Management",
+      path: "skuManagement",
+      desc: "Listing of all Colors",
+    },
+    // {
+    //   name: "Group",
+    //   path: "group",
+    //   desc: "Listing of all groups",
+    // },
     {
       name: "Group",
-      path: "group",
-      desc: "Listing of all groups",
-    },
-    {
-      name: "Group1",
       path: "group1",
       desc: "Listing of all groups",
     },
