@@ -16,6 +16,7 @@ const ItemsInventory = () => {
   });
   const [hoveredItems, setHoveredItems] = useState(null);
   const popupRef = useRef(null);
+  const navigate = useNavigate()
 
   // Fetch product data from API
   const fetchItems = async () => {
@@ -27,13 +28,22 @@ const ItemsInventory = () => {
         `${config.API_URL}/api/master/getItemStock/`
       );
 
+        const response3 = await axios.get(
+          `${config.API_URL}/api/master/getTotalItemStockForAll`
+        );
+
+
       let mergedItems = response1.data.map((item) => {
         let stock = response2.data.stockData.find(
           (stock) => stock.itemId == item._id
         );
+                 let itemStock = response3.data.find(
+                   (stock) => stock.itemId == item._id
+                 );
+
         return {
           ...item,
-             availableStock: stock?.availableStock ?? 0,
+          availableStock: itemStock?.totalQuantity ?? 0,
         };
       });
       console.log(mergedItems);
@@ -220,6 +230,7 @@ const ItemsInventory = () => {
                     className="py-2 px-3 border cursor-pointer"
                     onMouseEnter={() => setHoveredItems(item)}
                     onMouseLeave={() => setHoveredItems(null)}
+                    onClick={() => navigate(`stock-entries/${item._id}`)}
                   >
                     <span className="text-blue-600 ">{item.itemName}</span>{" "}
                   </td>

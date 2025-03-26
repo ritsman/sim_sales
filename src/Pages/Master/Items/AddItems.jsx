@@ -172,6 +172,7 @@ const AddItems = () => {
             id="itemName"
             value={formData.itemName}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -186,6 +187,7 @@ const AddItems = () => {
             placeholder="Item Type*"
             value={formData.itemType}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -202,6 +204,7 @@ const AddItems = () => {
             id="itemColor"
             value={formData.itemColor}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -220,6 +223,7 @@ const AddItems = () => {
             placeholder="Item Select*"
             value={formData.itemSelect}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -234,6 +238,7 @@ const AddItems = () => {
             placeholder="GST*"
             value={formData.gst}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -248,6 +253,7 @@ const AddItems = () => {
             placeholder="HSN_Code*"
             value={formData.hsnCode}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -262,6 +268,7 @@ const AddItems = () => {
             id="rate"
             value={formData.rate}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -307,6 +314,7 @@ const AddItems = () => {
             id="bufferUnit"
             value={formData.bufferUnit}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -324,6 +332,7 @@ const AddItems = () => {
             id="openingStock"
             value={formData.openingStock}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -369,6 +378,7 @@ const AddItems = () => {
             id="purchaseIssueRatio"
             value={formData.purchaseIssueRatio}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -383,6 +393,7 @@ const AddItems = () => {
             id="moq"
             value={formData.moq}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -397,6 +408,7 @@ const AddItems = () => {
             placeholder="Msc1*"
             value={formData.msc1}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -411,6 +423,7 @@ const AddItems = () => {
             placeholder="Msc2*"
             value={formData.msc2}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -427,6 +440,7 @@ const AddItems = () => {
             id="specification"
             value={formData.specification}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -441,6 +455,7 @@ const AddItems = () => {
             placeholder="User*"
             value={formData.user}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

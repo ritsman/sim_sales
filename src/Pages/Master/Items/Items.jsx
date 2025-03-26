@@ -69,19 +69,25 @@ const Items = () => {
           `${config.API_URL}/api/master/getItemStock`
         );
 
-        console.log(response2.data.stockData);
+          const response3 = await axios.get(
+            `${config.API_URL}/api/master/getTotalItemStockForAll`
+          );
+
+        console.log(response3);
 
         let a = response.data.map((item) => {
           let stock = response2.data.stockData.find(
             (stock) => stock.itemId == item._id
           );
 
+         let itemStock = response3.data.find(stock=>stock.itemId == item._id);
+
           console.log(stock);
 
           return {
             ...item,
             stock: 0,
-            availableStock: stock?.availableStock ?? 0,
+            availableStock: itemStock?.totalQuantity ?? 0,
           };
         });
         setItems(a);
@@ -103,6 +109,8 @@ const Items = () => {
         itemName: item.itemName,
         itemType: item.itemType,
         itemColor: item.itemColor,
+        itemPurchaseUnit: item.purchaseUnit,
+        itemIssueUnit: item.issueUnit,
       },
     });
   };
@@ -163,20 +171,17 @@ const Items = () => {
   ];
 
   const handleSubmitStock = async() => {
-      // let stocksss = items.map(item=>{
-      //   return {
-      //     itemId: item._id,
-      //     type: "IN",
-      //     quantity: item.stock,
-      //   };
-      // })
+           console.log(items,"items")
          let stocksss = items.map((item) => {
            return {
              itemId: item._id,
              stockDetails: [],
              totalQuantity: item.stock,
+             type: "IN",
+             unit: item.purchaseUnit,
            };
-         });
+         }).filter(item=>item.totalQuantity != 0);
+
       console.log(stocksss);
      try {
     const response = await axios.post(

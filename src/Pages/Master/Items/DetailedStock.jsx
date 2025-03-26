@@ -8,7 +8,14 @@ const DetailedStock = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const hotTableRef = useRef(null);
-  const { itemId, itemName, itemType, itemColor } = location.state || {};
+  const {
+    itemId,
+    itemName,
+    itemType,
+    itemColor,
+    itemPurchaseUnit,
+    itemIssueUnit,
+  } = location.state || {};
 
   const [columnCount, setColumnCount] = useState(0);
   const [showTable, setShowTable] = useState(false);
@@ -66,8 +73,12 @@ const DetailedStock = () => {
       alert("No valid stock data to attach.");
       return;
     }
+
+    console.log(itemIssueUnit,"unit")
    
      let detailedData = {
+       type:"IN",
+       unit:itemIssueUnit,
        Quantity:null,
        itemId,
        stockDetails:filteredStockDetails

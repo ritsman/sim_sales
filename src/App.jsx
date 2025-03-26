@@ -133,7 +133,7 @@ import MaterialNav from "./Pages/MatMgmt/MaterialNav";
 import Money from "./Pages/Money/Money";
 import MoneyNav from "./Pages/Money/MoneyNav";
 // import Payment, { loader as paymentLoader } from "./Pages/Money/Payment";
-import WoScheduler from "./Pages/work order/WoScheduler";
+// import WoScheduler from "./Pages/work order/WoScheduler";
 // import LoginPage from "./Pages/Authentication/Login/Login.jsx";
 import SignUp from "./Pages/Authentication/SignUp/SignUp.jsx";
 // import { getCurrentUser } from "./Pages/Authentication/Login/Login.jsx";
@@ -186,6 +186,7 @@ import Dispatch from "./Pages/Shipment/Dispatch.jsx";
 import Invoice from "./Pages/Shipment/Invoice.jsx";
 import DetailedStock from "./Pages/Master/Items/DetailedStock.jsx";
 import Profile from "./Pages/Profile/Profile.jsx";
+import ViewDetailedStock from "./Pages/Inventory/Item/ViewDetailedStock.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -709,6 +710,10 @@ const router = createBrowserRouter([
           {
             path: "itemInventory",
             element: <ItemsInventory />,
+          },
+          {
+            path: "itemInventory/stock-entries/:itemId",
+            element: <ViewDetailedStock />,
           },
         ],
       },

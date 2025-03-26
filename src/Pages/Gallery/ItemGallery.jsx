@@ -33,6 +33,9 @@ const ItemGallery = () => {
          `${config.API_URL}/api/gallery/getItemFromCollections/`
        );
 
+          const response3 = await axios.get(
+            `${config.API_URL}/api/master/getTotalItemStockForAll`
+          );
 
        const productData = productResponse.data;
        const stockData = stockResponse.data.stockData;
@@ -52,13 +55,18 @@ const ItemGallery = () => {
            .filter((pc) => pc.itemId === product._id)
            .map((pc) => pc.collectionId);
 
-          let quantity= stockData.find(item=>item.itemId == product._id);
+          // let quantity= stockData.find(item=>item.itemId == product._id);
+
+                   let itemStock = response3.data.find(
+                     (stock) => stock.itemId == product._id
+                   );
+
 
      
 
          return {
            ...product,
-           availableStock: quantity?.availableStock ?? 0,
+           availableStock: itemStock?.totalQuantity ?? 0,
            image: product.image || "https://via.placeholder.com/150",
            collections: productCollections,
          };
