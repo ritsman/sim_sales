@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node simServer.js",
-    "dev": "nodemon simServer.js"
+    "start": "node gemServer.js",
+    "dev": "nodemon gemServer.js"
   },
   "author": "",
   "license": "ISC",
