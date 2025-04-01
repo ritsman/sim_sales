@@ -7,12 +7,12 @@ export default function InventoryNav() {
     {
       name: "Item",
       desc: "Listing of all Customers and Vendors",
-      path: "itemInventory",
+      path: "iteminventory",
     },
     {
       name: "Product",
       desc: " Listing of all Units of Measurement.",
-      path: "productInventory",
+      path: "productinventory",
     },
   ];
   return (

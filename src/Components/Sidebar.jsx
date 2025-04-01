@@ -4,7 +4,7 @@ import "semantic-ui-css/semantic.min.css";
 import { Link, Outlet } from "react-router-dom";
 import menu_master from "../Consts/Master/Master.const";
 import Breadcrumbs from "../Components/BreadCrumps.jsx";
-import "./sidebarr.css";
+import "./Sidebar.css";
 import {
   Icon,
   Sidebar,
@@ -21,18 +21,8 @@ import {
 export default function SidebarCom({ visible, change, sidemenu2 }) {
   let paths = [
     { title: "Home", link: "/" },
-    { title: "Gallery", link: "/gallery" },
-    { title: "Product Gallery", link: "/gallery/productGallery" },
-    { title: "Item Gallery", link: "/gallery/itemGallery" },
-    { title: "Item Stock", link: "/gallery/itemStock" },
-    { title: "Product Stock", link: "/gallery/productStock" },
     { title: "Sales", link: "/sales" },
-
-    { title: "Sales View", link: "/sales/salesView" },
-
     { title: "Work Order", link: "/workorder" },
-    { title: " Create WorkOrder", link: "/workorder/createWorkOrder" },
-
     { title: "Material", link: "/material" },
     { title: "Purchase Order", link: "/material/purchaseorder" },
     { title: "Goods Reciept Note", link: "/material/grn" },
@@ -41,9 +31,6 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
     { title: "Master", link: "/master" },
     { title: "Product", link: "/master/product" },
     { title: "Inventory", link: "/inventory" },
-    { title: "Items Inventory", link: "/inventory/itemInventory" },
-    { title: "Product Inventory", link: "/inventory/productInventory" },
-
     { title: "Dashboard", link: "/dashboard" },
     { title: "Home", link: "/" },
     { title: "Home", link: "/" },
@@ -65,8 +52,6 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
 
   function m(sidemenu2) {
     switch (sidemenu2) {
-      case "/":
-        return menu_master.home;
       case "master":
         return menu_master.master;
       case "dashboard":
@@ -75,12 +60,6 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         return menu_master.material;
       case "money":
         return menu_master.money;
-      case "sales":
-        return menu_master.sales;
-      case "gallery":
-        return menu_master.gallery;
-      case "shipment":
-        return menu_master.shipment;
       default:
         return menu_items_default;
     }
@@ -89,10 +68,7 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
   // console.log(menu_items);
   return (
     <>
-      <Sidebar.Pushable
-        as={Segment}
-        // style={{ height: "100vh", display: "flex" }}
-      >
+      <Sidebar.Pushable as={Segment}>
         <Sidebar
           as={Menu}
           visible={visible}
@@ -100,7 +76,7 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
           vertical
           inverted
           onHide={() => change()}
-          className="custom-sidebar "
+          className="custom-sidebar"
         >
           <Menu.Item as={Link} to="navigate">
             Navigation Pane
@@ -113,10 +89,10 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
             </Menu.Item>
           ))}
         </Sidebar>
-        <Sidebar.Pusher className="main-content">
-          <Segment basic className="outlet-container">
+        <Sidebar.Pusher>
+          <Segment basic>
             {/* <Header as="h4">Data</Header> */}
-            <div className=" w-screen px-10 ">
+            <div className=" w-screen ">
               <Breadcrumbs paths={paths} />
               <Outlet />
             </div>
@@ -124,5 +100,5 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     </>
-  )
+  );
 }

@@ -13,22 +13,20 @@ export default function RootLayout() {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("dashboard");
   const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
   const { userDetails, setUserDetails, setIsAuthenticated } = useAuth();
 
   const handleItemClick = (e, name) => {
     setActiveItem(name);
-    // setVisible(true);
+    setVisible(true);
     // navigate(`${name}`);
     // e.stopPropagation();
   };
-  
   useEffect(() => {
-    console.log(userDetails);
-    let tkn = localStorage.getItem("simToken");
+    let tkn = localStorage.getItem("token");
     let token = parseJwt(tkn);
     console.log(token);
-    let userName = localStorage.getItem("simUser");
+    let userName = localStorage.getItem("user");
     setUser(userName);
     setUserDetails(token);
   }, [user]);
@@ -44,15 +42,15 @@ export default function RootLayout() {
   function handleLogout() {
     setUserDetails({});
     setIsAuthenticated(false);
-    localStorage.removeItem("simToken");
-    localStorage.removeItem("simUser");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     toast.success("User Logged Out");
-    navigate("/login");
+    navigate("/");
   }
 
   return (
     <>
-      <div className="bg-[#0d4a2b] flex items-center justify-between p-4">
+      <div className="bg-gray-800 flex items-center justify-between p-4">
         <div className="flex items-center">
           <img
             src="https://cdn1.iconfinder.com/data/icons/user-interface-2311/24/menu_open_menu_menu_bar_three_lines_ui-512.png"
@@ -60,20 +58,14 @@ export default function RootLayout() {
             onClick={() => setVisible(!visible)}
           />
         </div>
-        <div className="flex items-center">
-          <img
-            src="\logo-removebg-preview.png"
-            className="h-12 w-12 "
-          />
-        </div>
         <div className=" text-center">
           <Menubar activeItem={activeItem} handleItemClick={handleItemClick} />
         </div>
         <div className="flex items-center space-x-4">
-          {/* <span className="text-white text-xl">{user}</span> */}
+          <span className="text-white text-xl">{user}</span>
           <button
             onClick={handleLogout}
-            className="bg-[#145236] hover:bg-[#0c3f26] px-3 py-2 rounded-md text-white text-xl"
+            className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-white text-xl"
           >
             Logout
           </button>
@@ -94,9 +86,7 @@ export default function RootLayout() {
 }
 
 export const Logged = () => {
-
   const { isAuthenticated } = useAuth();
-
   let logged = getCurrentUser();
 
   return <>{logged ? <RootLayout /> : <LoginPage />}</>;

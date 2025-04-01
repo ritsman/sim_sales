@@ -1,43 +1,124 @@
+import { Menu } from "semantic-ui-react";
+import { useEffect, useReducer } from "react";
 import { NavLink } from "react-router-dom";
-import { FaHome } from "react-icons/fa";
 
-const ACTIVE_COLOR = "bg-[#29a36c]"; // Active background color
-const INACTIVE_COLOR = "bg-[#145236]"; // Inactive background color
-const HOVER_COLOR = "hover:bg-[#0c3f26]"; // Hover background color
-
-export default function Menubar({ handleItemClick }) {
-  const menuItems = [
-    { name: "home", icon: <FaHome className="text-white" /> },
-    { name: "dashboard" },
-    { name: "scheduler" },
-    { name: "gallery" },
-    { name: "sales" },
-    { name: "workorder" },
-    { name: "material" },
-    { name: "inventory" },
-    { name: "finance" },
-    { name: "master" },
-    { name: "shipment" },
-  ];
-
+export default function Menubar({ activeItem, handleItemClick }) {
   return (
-    <div className="flex space-x-4">
-      {menuItems.map(({ name, icon }) => (
+    <>
+      <div className="flex space-x-4 ">
         <NavLink
-          key={name}
-          to={name === "home" ? "/" : name}
+          to="dashboard"
           className={({ isActive }) =>
-            `${isActive ? ACTIVE_COLOR : INACTIVE_COLOR} rounded-md`
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
           }
         >
           <p
-            className={`flex items-center gap-2 text-white px-2 py-1 rounded-md transition-colors duration-200 ${HOVER_COLOR}`}
-            onClick={(e) => handleItemClick(e, name === "home" ? "/" : name)}
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "dashboard")}
           >
-            {icon} {name.charAt(0).toUpperCase() + name.slice(1)}
+            Dashboard
           </p>
         </NavLink>
-      ))}
-    </div>
+        <NavLink
+          to="gallery"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "gallery")}
+          >
+            Gallery
+          </p>
+        </NavLink>
+        <NavLink
+          to="sales"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "sales")}
+          >
+            Sales
+          </p>
+        </NavLink>
+        <NavLink
+          to="workorder"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "workorder")}
+          >
+            Work Order
+          </p>
+        </NavLink>
+        <NavLink
+          to="material"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "material")}
+          >
+            Material
+          </p>
+        </NavLink>
+        <NavLink
+          to="inventory"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "inventory")}
+          >
+            Inventory
+          </p>
+        </NavLink>
+        <NavLink
+          to="finance"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "finance")}
+          >
+            Finance
+          </p>
+        </NavLink>
+        <NavLink
+          to="master"
+          className={({ isActive }) =>
+            ` ${isActive ? "bg-gray-400" : "bg-gray-700"}  rounded-md `
+          }
+        >
+          <p
+            className=" text-white  hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+            onClick={(e) => handleItemClick(e, "master")}
+          >
+            Master
+          </p>
+        </NavLink>
+      </div>
+    </>
   );
 }
+
+//  <Menu.Item
+//    name="dashboard"
+//    active={activeItem === "dashboard"}
+//    onClick={handleItemClick}
+//  >
+//    Dashboard
+//  </Menu.Item>;

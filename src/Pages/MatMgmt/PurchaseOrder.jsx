@@ -22,6 +22,7 @@ import {
   TableHeaderCell,
   Icon,
 } from "semantic-ui-react";
+import { getPageData } from "../../Double/fun";
 import {
   MasterUrl,
   records_per_page,

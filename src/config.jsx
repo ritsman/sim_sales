@@ -1,10 +1,10 @@
 
 
 const config = {
-  API_URL: "https://s1.simranwebsoft.com/aysales",
+  API_URL: "http://localhost:3000",
 };
 
 export default config;
 
-//https://s1.simranwebsoft.com/aysales
-//http://localhost:3020
+//https://a3.arya-erp.in/api2/aryapi
+//http://localhost:3001
