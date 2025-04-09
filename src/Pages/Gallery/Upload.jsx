@@ -27,9 +27,10 @@ const GalleryUpload = () => {
 
       const productData = productRes.data;
       const stockData = stockRes.data;
-
+      console.log(stockData, "stockData");
       // Merge stock data into products
       const mergedData = productData.map((product) => {
+        console.log(product, "product");
         const stockEntry = stockData.find(
           (stock) => stock.productId === product._id
         ) || {
@@ -47,7 +48,8 @@ const GalleryUpload = () => {
           }, {}),
         };
       });
-
+      //console.log(mergedData,'mergedData')
+      setFilteredProducts(mergedData);
       setProducts(mergedData);
       setCategories([...new Set(mergedData.map((p) => p.category))]);
     } catch (error) {
@@ -57,6 +59,7 @@ const GalleryUpload = () => {
 
   // Handle category filter
   const handleView = () => {
+    // alert('viewclicked');
     if (!selectedCategory) return;
     setFilteredProducts(
       products.filter((p) => p.category === selectedCategory)

@@ -116,12 +116,10 @@ console.log(productCollectionsData,'productCollectionsData');
                   (item) => item?.skuId === skuId
                 );
               }else{
-                product['productId'] = product._id;
                 allrelatedProd.push(product);
               }
               console.log(allrelatedProd, "allrelatedProd");
               let variations = [];
-              
               allrelatedProd.forEach((item) => {
                 if (!item || !item.productId) return;
                 let obj = productData.find(
@@ -313,7 +311,7 @@ console.log(productCollectionsData,'productCollectionsData');
       ...prev,
       {
         // skuId: skuId,
-        styleName: product.styleName,
+        styleName: products.find((p) => p._id === prodId).styleName,
         price: product.price,
         sizes: { ...product.sizes }, // Available stock
         sizes2: { ...product.sizes2 }, // Selected quantities

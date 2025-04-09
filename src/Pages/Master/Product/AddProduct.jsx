@@ -129,6 +129,7 @@ const AddProduct = () => {
          setItems(itemRes.data)
          setProcesses(processRes.data);
          setCategories([...categoryRes.data]);
+         
          setSizes(sizeRes.data);
          setColors(options2);
       } catch (error) {
@@ -137,7 +138,7 @@ const AddProduct = () => {
     };
     fetchDropdownData();
   }, []);
-
+  console.log(categories,"categoryRes.data");
   // Handle image selection
    const handleImageChange = (e, fieldName) => {
      const file = e.target.files[0];
@@ -165,7 +166,7 @@ const AddProduct = () => {
     formData.append("hsnCode", hsnCode);
     formData.append("price", price);
     formData.append("cost", cost);
-    formData.append("sku", sku.value);
+    formData.append("sku", sku);
     formData.append("color", JSON.stringify(selectedColor.value));
 
     console.log("coloorsss",selectedColor)
@@ -298,7 +299,7 @@ console.log(size,"size");
           >
             <option value="">Select group</option>
             {categories.map((cat) => {
-              if (cat.under == "product") {
+              if (cat.parent == "product") {
                 return (
                   <option key={cat._id} value={cat.name}>
                     {cat.groupName}

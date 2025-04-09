@@ -230,6 +230,10 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "/prof",
+        element: <Profile />,
+      },
+      {
         path: "dashboard/",
         element: <Dashboard />,
       },

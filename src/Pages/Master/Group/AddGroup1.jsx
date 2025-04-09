@@ -11,6 +11,7 @@ const AddGroup1 = () => {
 
   const [groupName, setGroupName] = useState("");
   const [type, setType] = useState("");
+  const [underGroup,setUnderGroup] = useState("");
   const [groups, setGroups] = useState([]);
   const [itemsList, setItemsList] = useState({});
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -20,6 +21,7 @@ const AddGroup1 = () => {
     const fetchGroups = async () => {
       try {
         let res = await axios.get(`${config.API_URL}/api/master/getGroup`);
+        console.log(res.data,'groups');
         setGroups(res.data);
       } catch (error) {
         console.error("Error fetching groups:", error);
@@ -115,18 +117,16 @@ const AddGroup1 = () => {
       toast.error("Please select a type!");
       return;
     }
-    if (selectedItems.length === 0) {
-      toast.error(`Please add at least one ${type}!`);
-      return;
-    }
+   
 
     // Payload to send
     const payload = {
       groupName,
-      under: type,
+      parent:type,
+      under: underGroup,
       selectedItems, // Send selected items as array
     };
-    console.log(payload);
+    console.log(payload,"payload");
     try {
       if (editingGroup) {
         // Update existing group
@@ -142,6 +142,7 @@ const AddGroup1 = () => {
       }
 
       navigate(-1); // Go back after success
+      //e.preventDefault(); // Prevent default form submission
     } catch (error) {
       console.error("Error saving group:", error);
       toast.error("Something went wrong. Please try again!");
@@ -195,60 +196,24 @@ const AddGroup1 = () => {
           {/* Add Dropdown using Select */}
           {/* {type && ( */}
           <div className="mb-4">
-            <label className="block font-medium">Add {type}</label>
+            <label className="block font-medium">Make New {type} Group Under</label>
             <select
               className="w-full border px-3 py-2 rounded"
-              onChange={addItem}
+              onChange={(e) => setUnderGroup(e.target.value)}
               defaultValue=""
             >
-              <option value="">Select {type}</option>
-              {filteredOptions.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {type === "activity" && item.activityName}
-                  {type === "product" && item.styleName}
-                  {type === "size" && item.sizeName}
-                  {type === "item" && item.itemName}
-                  {type === "process" && item.processName}
+              <option value="">New Group</option>
+              {groups.map((item) => (
+                <option key={item._id} value={item.groupName}>
+                  {item.parent===type && item.groupName}
+                  
                 </option>
               ))}
             </select>
           </div>
           {/* )} */}
 
-          {/* Display Selected Items */}
-          {selectedItems.length > 0 && (
-            <div className="col-span-2 mt-6 mb-5 bg-white p-4 rounded-lg shadow-md">
-              <h2 className="text-lg font-semibold text-gray-700 mb-3">
-                Selected {type}s
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {selectedItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow-sm border border-gray-300"
-                  >
-                    {/* Item Name */}
-                    <span className="text-gray-800 font-medium">
-                      {type === "activity" && item.activityName}
-                      {type === "product" && item.styleName}
-                      {type === "size" && item.sizeName}
-                      {type === "item" && item.itemName}
-                      {type === "process" && item.processName}
-                    </span>
-
-                    {/* Remove Button */}
-                    <button
-                      onClick={() => removeItem(index)}
-                      className="ml-2 text-red-500 hover:text-red-700 transition duration-200"
-                      title="Remove"
-                    >
-                      ✖
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+         
 
           {/* Buttons */}
           <div className="col-span-full flex justify-end space-x-4">
