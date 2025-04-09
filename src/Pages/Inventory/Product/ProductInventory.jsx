@@ -328,6 +328,14 @@ const ProductInventory = () => {
               </th>
               <th
                 className="py-2 px-3 border text-left cursor-pointer hover:bg-gray-200"
+                onClick={() => requestSort("color")}
+              >
+                Color{" "}
+                {sortConfig.key === "color" &&
+                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+              </th>
+              <th
+                className="py-2 px-3 border text-left cursor-pointer hover:bg-gray-200"
                 onClick={() => requestSort("hsnCode")}
               >
                 HSN Code{" "}
@@ -369,6 +377,7 @@ const ProductInventory = () => {
                   <td className="py-2 px-3 border">{product.reference}</td>
                   <td className="py-2 px-3 border">{product.season}</td>
                   <td className="py-2 px-3 border">{product.category}</td>
+                  <td className="py-2 px-3 border">{product.color.colorName}</td>
                   <td className="py-2 px-3 border">{product.hsnCode}</td>
                   <td className="py-2 px-3 border">{product.price}</td>
                   <td className="py-2 px-3 border">
