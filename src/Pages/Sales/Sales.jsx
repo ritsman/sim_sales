@@ -57,9 +57,11 @@ const Sales = () => {
             const stockData = stockResponse.data || [];
             const productCollectionsData =
               productCollectionsResponse.data || [];
-
+console.log(productCollectionsData,'productCollectionsData');
+            console.log(productData, "productData");
           const stockMap = {};
-
+              console.log(stockData, "stockData");
+              console.log("___________");
           // Map stock data by product ID and size
           stockData.forEach(({ productId, type, sizes }) => {
             sizes.forEach(({ size, quantity }) => {
@@ -75,7 +77,7 @@ const Sales = () => {
                   totalUnreserved: 0,
                 };
               }
-
+              console.log(stockMap,'stockmap');
               // Update stock calculations
               if (type === "IN") {
                 stockMap[productId][size].totalIn += quantity;
@@ -88,6 +90,7 @@ const Sales = () => {
               }
             });
           });
+          console.log(stockMap,'stockmap66');
 
             // Group products by SKU
             const groupedProducts = {};
@@ -99,7 +102,7 @@ const Sales = () => {
               let productCol = productCollectionsData.find(
                 (item) => item?.productId === product._id
               );
-
+              console.log(sizesData,'sizesdata');
               let skuId = null;
 
               if (productCol) {
@@ -112,9 +115,13 @@ const Sales = () => {
                 allrelatedProd = productCollectionsData.filter(
                   (item) => item?.skuId === skuId
                 );
+              }else{
+                product['productId'] = product._id;
+                allrelatedProd.push(product);
               }
-
+              console.log(allrelatedProd, "allrelatedProd");
               let variations = [];
+              
               allrelatedProd.forEach((item) => {
                 if (!item || !item.productId) return;
                 let obj = productData.find(
@@ -124,11 +131,15 @@ const Sales = () => {
                   variations.push(obj);
                 }
               });
+              console.log(variations, "variations");
 
+              
             let variation=  variations.map(item=>{
+              console.log(item,'item');
                  const sizesData = stockMap[product._id] || {};
 
                  // Calculate available stock per size
+                 console.log(sizesData,'sizesdata');
                  const availableStock = Object.keys(sizesData).reduce(
                    (acc, size) => {
                      acc[size] = Math.max(
@@ -138,14 +149,23 @@ const Sales = () => {
                            sizesData[size].totalUnreserved),
                        0 // Ensure stock doesn't go negative
                      );
+                     
                      return acc;
                    },
                    {}
                  );
+                // for (const size in sizesData) {
+                //   const { totalIn, totalOut, totalReserved } = sizesData[size];
+                //   const available = totalIn - totalOut - totalReserved;
+                //   console.log(`${size.toLowerCase()}: ${available}`);
+                // }
+                
+                 
+                 console.log(availableStock,'availableStock')
 
                  // Ensure sizes object is initialized
                  const initialSizes = product.size.sizes.reduce((acc, size) => {
-                   acc[size] = 0;
+                   acc[size] = sizesData[size].totalIn;
                    return acc;
                  }, {});
                 return {
@@ -155,7 +175,7 @@ const Sales = () => {
                 }
               })
 
-    
+              
                   let selectedInd = variations.findIndex(ite =>ite._id == product._id)
               // If product doesn't exist in groupedProducts, initialize it
               if (!groupedProducts[product._id]) {
@@ -170,7 +190,7 @@ const Sales = () => {
                 };
               }
             });
-
+            console.log(groupedProducts,'groupedproduct.......');
             // Convert object to array and ensure variations have all required properties
             const finalProducts = Object.values(groupedProducts).map(
               (product) => {
@@ -223,7 +243,7 @@ const Sales = () => {
                 };
               }
             );
-              console.log(finalProducts)
+              console.log(finalProducts,'finalProducts')
             setProducts(finalProducts);
 
             // Extract unique categories
@@ -293,7 +313,7 @@ const Sales = () => {
       ...prev,
       {
         // skuId: skuId,
-        styleName: products.find((p) => p._id === prodId).styleName,
+        styleName: product.styleName,
         price: product.price,
         sizes: { ...product.sizes }, // Available stock
         sizes2: { ...product.sizes2 }, // Selected quantities
