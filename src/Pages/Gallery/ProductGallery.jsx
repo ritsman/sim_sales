@@ -254,6 +254,9 @@ const ProductGallery = () => {
             <p className="text-sm text-gray-600">
               Category: {product.category}
             </p>
+            <p className="text-sm text-gray-600">
+              Color: {product.color.colorName}
+            </p>
             <p className="text-sm text-gray-600">Price: ₹{product.price}</p>
 
             {/* Collection Tags */}
