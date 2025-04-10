@@ -135,6 +135,7 @@ const Product = () => {
     { data: "reference", type: "text", title: "Reference", width: 150 },
     { data: "season", type: "text", title: "Season", width: 150 },
     { data: "category", type: "text", title: "Category", width: 150 },
+    { data: "color.colorName", type: "text", title: "Color", width: 150 },
     { data: "hsnCode", type: "text", title: "HSN Code", width: 150 },
     { data: "price", type: "numeric", title: "Price", width: 150 },
     { data: null, renderer: sizeRenderer, title: "Size", width: 150 },
