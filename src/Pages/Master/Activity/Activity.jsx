@@ -7,6 +7,7 @@ const Activity = () => {
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchActivities();
@@ -53,10 +54,24 @@ const Activity = () => {
     navigate("addActivity", { state: { activity } });
   };
 
+  // Filter activities based on search query
+  const filteredActivities = activities.filter((activity) =>
+    [activity.activityName, activity.description, activity.group].some(
+      (field) => field?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Activities</h2>
+        <input
+          type="text"
+          placeholder="Search by name, description, or group..."
+          className="border px-4 py-2 rounded w-full md:w-80"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
         <div>
           <button
             onClick={handleDelete}
@@ -81,12 +96,14 @@ const Activity = () => {
             <th className="border p-2">Description</th>
             <th className="border p-2">Time (min)</th>
             <th className="border p-2">Cost (₹)</th>
+            <th className="border p-2">Group</th>
+
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {activities.length > 0 ? (
-            activities.map((activity) => (
+          {filteredActivities.length > 0 ? (
+            filteredActivities.map((activity) => (
               <tr key={activity._id} className="text-center">
                 <td className="border p-2">
                   <input
@@ -99,6 +116,8 @@ const Activity = () => {
                 <td className="border p-2">{activity.description}</td>
                 <td className="border p-2">{activity.time}</td>
                 <td className="border p-2">₹{activity.cost}</td>
+                <td className="border p-2">{activity.group}</td>
+
                 <td className="border p-2">
                   <button
                     onClick={() => handleEdit(activity)}

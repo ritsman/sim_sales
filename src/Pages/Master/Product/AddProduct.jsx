@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
+import Select from "react-select";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const AddProduct = () => {
   // State for form fields
   const [styleName, setStyleName] = useState("");
   const [reference, setReference] = useState("");
+  const [cost , setCost] = useState("");
   const [season, setSeason] = useState("");
   const [category, setCategory] = useState("");
   const [hsnCode, setHsnCode] = useState("");
@@ -20,8 +22,11 @@ const AddProduct = () => {
   const [items , setItems ]=useState([]);
   const [selectedItems,setSelectedItems] = useState([]);
   const [processes , setProcesses] = useState([]);
-  // const [image, setImage] = useState(null); // Store image file
-  // const [previewImage, setPreviewImage] = useState(null); // Store image preview
+  const [sku , setSku] = useState("");
+  const [products , setProducts] = useState([])
+  const [colors , setColors] = useState([]);
+  const [selectedColor , setSelectedColor] = useState({});
+
 
    const [images, setImages] = useState({
      image1: null,
@@ -38,11 +43,6 @@ const AddProduct = () => {
   const [categories, setCategories] = useState([]);
   const [sizes, setSizes] = useState([]);
 
- const options2 = [
-   { _id: 1, code: "A1000", groupName: "group1", under: "Primary" },
-   { _id: 2, code: "B1000", groupName: "group2", under: "Primary" },
- ];
-
   // Pre-fill form if editing
   useEffect(() => {
     if (editingProduct) {
@@ -55,6 +55,17 @@ const AddProduct = () => {
       setHsnCode(editingProduct.hsnCode);
       setPrice(editingProduct.price);
       setSize(editingProduct.size);
+      setCost(editingProduct.cost);
+      setSku({
+        value: editingProduct.sku,
+        label: editingProduct.sku,
+      });
+    if (editingProduct.color) {
+      setSelectedColor({
+        value: editingProduct.color,
+        label: editingProduct.color.colorName,
+      });
+    }  
       console.log(editingProduct.image)
     //  if (editingProduct.image) {
     //    setPreviewImage(`${config.API_URL}${editingProduct.image}`); // ✅ Add backend URL
@@ -92,10 +103,28 @@ const AddProduct = () => {
           const processRes = await axios.get(
             `${config.API_URL}/api/master/getProcess`
           );
+           const productRes = await axios.get(
+             `${config.API_URL}/api/master/getProduct`
+           );
+
+            const ColorRes = await axios.get(
+              `${config.API_URL}/api/master/getColor`
+            );
+
+          const options = productRes.data.map((product) => ({
+              value: product.styleName,
+              label: product.styleName,
+            }));
+             const options2 = ColorRes.data.map((color) => ({
+               value: color,
+               label: color.colorName,
+             }));
+         setProducts(options);
          setItems(itemRes.data)
          setProcesses(processRes.data);
-        setCategories([...categoryRes.data]);
-        setSizes(sizeRes.data);
+         setCategories([...categoryRes.data]);
+         setSizes(sizeRes.data);
+         setColors(options2);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
       }
@@ -116,19 +145,7 @@ const AddProduct = () => {
        reader.readAsDataURL(file);
      }
    };
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   setImage(file);
 
-  //   // Preview Image
-  //   const reader = new FileReader();
-  //   reader.onloadend = () => {
-  //     setPreviewImage(reader.result);
-  //   };
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -141,6 +158,14 @@ const AddProduct = () => {
     formData.append("category", category);
     formData.append("hsnCode", hsnCode);
     formData.append("price", price);
+    formData.append("cost", cost);
+    formData.append("sku", sku.value);
+    formData.append("color", JSON.stringify(selectedColor.value));
+
+    console.log("coloorsss",selectedColor)
+
+
+
     formData.append("items", JSON.stringify(selectedItems));
 
     formData.append("size", JSON.stringify(size)); // Convert object to JSON string
@@ -267,10 +292,10 @@ console.log(size,"size");
           >
             <option value="">Select group</option>
             {categories.map((cat) => {
-              if (cat.under == "product") {
+              if (cat.type == "product") {
                 return (
                   <option key={cat._id} value={cat.name}>
-                    {cat.groupName}
+                    {cat.name}
                   </option>
                 );
               }
@@ -297,6 +322,16 @@ console.log(size,"size");
             className="w-full border px-3 py-2 rounded focus:ring focus:ring-blue-300"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold text-gray-600">Cost</label>
+          <input
+            type="number"
+            className="w-full border px-3 py-2 rounded focus:ring focus:ring-blue-300"
+            value={cost}
+            onChange={(e) => setCost(e.target.value)}
           />
         </div>
 
@@ -378,6 +413,28 @@ console.log(size,"size");
             </div>
           </div>
         )}
+
+        {/* <div className="mb-4">
+          <label className="block font-medium">SKU Under</label>
+          <Select
+            options={products}
+            value={sku}
+            onChange={(selectedOption) => setSku(selectedOption)}
+            placeholder="Search SKU..."
+            className="w-full"
+          />
+        </div> */}
+
+        <div className="mb-4">
+          <label className="block font-medium">Color</label>
+          <Select
+            options={colors}
+            value={selectedColor}
+            onChange={(selectedOption) => setSelectedColor(selectedOption)}
+            placeholder="Search color..."
+            className="w-full"
+          />
+        </div>
 
         {/* Image Upload */}
         <div className="col-span-2  grid grid-cols-3">

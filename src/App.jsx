@@ -133,7 +133,7 @@ import MaterialNav from "./Pages/MatMgmt/MaterialNav";
 import Money from "./Pages/Money/Money";
 import MoneyNav from "./Pages/Money/MoneyNav";
 // import Payment, { loader as paymentLoader } from "./Pages/Money/Payment";
-import WoScheduler from "./Pages/work order/WoScheduler";
+// import WoScheduler from "./Pages/work order/WoScheduler";
 // import LoginPage from "./Pages/Authentication/Login/Login.jsx";
 import SignUp from "./Pages/Authentication/SignUp/SignUp.jsx";
 // import { getCurrentUser } from "./Pages/Authentication/Login/Login.jsx";
@@ -178,6 +178,27 @@ import Group1 from "./Pages/Master/Group/Group1.jsx";
 import AddGroup1 from "./Pages/Master/Group/AddGroup1.jsx";
 import AdminLogin from "./Pages/Admin/AdminLogin.jsx";
 import AdminDashboard from "./Pages/Admin/AdminPanel.jsx";
+import Color from "./Pages/Master/Color/Color.jsx";
+import AddColor from "./Pages/Master/Color/AddColor.jsx";
+import SKU from "./Pages/Master/SkuManagement/SKU.jsx";
+import ManageSku from "./Pages/Master/SkuManagement/ManageSku.jsx";
+import Dispatch from "./Pages/Shipment/Dispatch.jsx";
+import Invoice from "./Pages/Shipment/Invoice.jsx";
+import DetailedStock from "./Pages/Master/Items/DetailedStock.jsx";
+import Profile from "./Pages/Profile/Profile.jsx";
+import ViewDetailedStock from "./Pages/Inventory/Item/ViewDetailedStock.jsx";
+import AddLocation from "./Pages/Master/Location/AddLocation.jsx";
+import Location from "./Pages/Master/Location/Location.jsx";
+import PurchaseOrder from "./Pages/Material/PurchaseOrder/PurchaseOrder.jsx";
+import PurchaseOrderList from "./Pages/Material/PurchaseOrder/PurchaseOrderView.jsx";
+import PurchaseOrderEdit from "./Pages/Material/PurchaseOrder/PurchaseOrderEdit.jsx";
+import GoodsReceiptNote from "./Pages/Material/GRN/GRN.jsx";
+import GRN from "./Pages/Material/GRN/GRN.jsx";
+import GRNView from "./Pages/Material/GRN/GRNView.jsx";
+import Editgrn from "./Pages/Material/GRN/GRNEdit.jsx";
+import GSN from "./Pages/Material/GSN/GSN.jsx";
+import GSNView from "./Pages/Material/GSN/GSNView.jsx";
+import Editgsn from "./Pages/Material/GSN/GSNEdit.jsx";
 // const ProtectedRoute = () => {
 //   const { isAuthenticated } = useAuth();
 //   let token = localStorage.getItem("token");
@@ -225,8 +246,20 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "shipment/",
+        path: "profile/",
+        element: <Profile />,
+      },
+      {
+        path: "shipment",
         element: <Shipment />,
+      },
+      {
+        path: "shipment/dispatch",
+        element: <Dispatch />,
+      },
+      {
+        path: "shipment/invoice",
+        element: <Invoice />,
       },
       {
         path: "scheduler/",
@@ -296,6 +329,10 @@ const router = createBrowserRouter([
           {
             path: "item1",
             element: <Items />,
+          },
+          {
+            path: "item1/detailed-stock",
+            element: <DetailedStock />,
           },
           {
             path: "item1/addItems",
@@ -419,13 +456,43 @@ const router = createBrowserRouter([
           //   loader: sizeLoader,
           // },
           {
+            path: "color",
+            element: <Color />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "color/addColor",
+            element: <AddColor />,
+            // loader: sizeLoader,
+          },
+          {
             path: "size1",
             element: <Size1 />,
             // loader: sizeLoader,
           },
           {
+            path: "location",
+            element: <Location />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "location/addLocation",
+            element: <AddLocation />,
+            // loader: sizeLoader,
+          },
+          {
             path: "size1/addForm",
             element: <AddSize />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "skuManagement",
+            element: <SKU />,
+            // loader: sizeLoader,
+          },
+          {
+            path: "skuManagement/editSku",
+            element: <ManageSku />,
             // loader: sizeLoader,
           },
           // {
@@ -634,20 +701,42 @@ const router = createBrowserRouter([
             index: true,
             element: <MaterialNav />,
           },
-          // {
-          //   path: "grn/",
-          //   // element: <GRN />,
-          //   element: <GRN />,
-          // },
-          // {
-          //   path: "gsn/",
-          //   element: <GSN />,
-          // },
-          // {
-          //   path: "purchaseorder/",
-          //   element: <PurchaseOrder />,
-          //   action: POAction,
-          // },
+          {
+            path: "grn/",
+            element: <GRN />,
+          },
+          {
+            path: "grnView/",
+            element: <GRNView />,
+          },
+          {
+            path: "edit-grn/:id",
+            element: <Editgrn />,
+          },
+          {
+            path: "gsn/",
+            element: <GSN />,
+          },
+          {
+            path: "gsnView/",
+            element: <GSNView />,
+          },
+          {
+            path: "edit-gsn/:id",
+            element: <Editgsn />,
+          },
+          {
+            path: "purchaseorder/",
+            element: <PurchaseOrder />,
+          },
+          {
+            path: "purchaseOrderView/",
+            element: <PurchaseOrderList />,
+          },
+          {
+            path: "edit-purchase-order/:id",
+            element: <PurchaseOrderEdit />,
+          },
         ],
       }, //end of material management
       {
@@ -665,6 +754,10 @@ const router = createBrowserRouter([
           {
             path: "itemInventory",
             element: <ItemsInventory />,
+          },
+          {
+            path: "itemInventory/stock-entries/:itemId",
+            element: <ViewDetailedStock />,
           },
         ],
       },

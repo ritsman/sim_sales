@@ -192,10 +192,7 @@ const SalesView = () => {
                   Order No: {order.order_no}
                 </h2>
                 <div className="flex gap-4">
-                  <button
-                    
-                    className="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
+                  <button className="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Send to Whatsapp
                   </button>
                   <button
@@ -528,6 +525,8 @@ const SalesView = () => {
                   <thead>
                     <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                       <th className="py-3 px-6 text-left">Product</th>
+                      <th className="py-3 px-6 text-left">Color</th>
+
                       <th className="py-3 px-6 text-left">Size</th>
                       <th className="py-3 px-6 text-center">Quantity</th>
                       <th className="py-3 px-6 text-right">Price (Per Item)</th>
@@ -545,6 +544,20 @@ const SalesView = () => {
                             >
                               <td className="py-3 px-6 text-left whitespace-nowrap">
                                 {product.styleName}
+                              </td>
+                              <td className="py-3 px-6 text-left whitespace-nowrap">
+                                <div
+                                  key={product._id}
+                                  className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer hover:scale-110 transition-transform"
+                                  style={{
+                                    backgroundColor: product.selectedColor.hex,
+                                    // boxShadow:
+                                    //   product.selectedIndex === index
+                                    //     ? "0 0 0 2px white, 0 0 0 4px #3b82f6"
+                                    //     : "",
+                                  }}
+                                
+                                ></div>
                               </td>
                               <td className="py-3 px-6 text-left">{size}</td>
                               <td className="py-3 px-6 text-center">

@@ -1,14 +1,17 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import config from "../../config";
+import Select from "react-select";
+import { findIndex } from "lodash";
 
 const Sales = () => {
+  const [selectedBuyer , setSelectedBuyer] = useState("")
+  const [selectedBuyerId , setSelectedBuyerId] = useState("");
   const [formData, setFormData] = useState({
     order_no: "",
     buyer: "",
+    buyerId:"",
     shipment_destination: "",
     whatsapp_number: "",
     shipment_type: "",
@@ -26,8 +29,7 @@ const Sales = () => {
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [parties, setParty] = useState([]);
-  const [buyerSearch, setBuyerSearch] = useState("");
-  const [showBuyerDropdown, setShowBuyerDropdown] = useState(false);
+ 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -42,107 +44,213 @@ const Sales = () => {
   });
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const productResponse = await axios.get(
-          `${config.API_URL}/api/master/getProduct/`
-        );
-        const stockResponse = await axios.get(
-          `${config.API_URL}/api/gallery/getStock/`
-        );
+        const fetchProducts = async () => {
+          try {
+            const [productResponse, stockResponse, productCollectionsResponse] =
+              await Promise.all([
+                axios.get(`${config.API_URL}/api/master/getProduct/`),
+                axios.get(`${config.API_URL}/api/gallery/getStock/`),
+                axios.get(`${config.API_URL}/api/master/getSkuProduct/`),
+              ]);
 
-        const productData = productResponse.data;
-        const stockData = stockResponse.data;
+            const productData = productResponse.data || [];
+            const stockData = stockResponse.data || [];
+            const productCollectionsData =
+              productCollectionsResponse.data || [];
 
-        const stockMap = {};
+          const stockMap = {};
 
-        stockData.forEach((stock) => {
-          stock.sizes.forEach(({ size, quantity }) => {
-            if (!stockMap[stock.productId]) {
-              stockMap[stock.productId] = {};
-            }
+          // Map stock data by product ID and size
+          stockData.forEach(({ productId, type, sizes }) => {
+            sizes.forEach(({ size, quantity }) => {
+              if (!stockMap[productId]) {
+                stockMap[productId] = {};
+              }
 
-            if (!stockMap[stock.productId][size]) {
-              stockMap[stock.productId][size] = {
-                totalIn: 0,
-                totalOut: 0,
-                totalReserved: 0,
-                totalUnreserved: 0,
-              };
-            }
+              if (!stockMap[productId][size]) {
+                stockMap[productId][size] = {
+                  totalIn: 0,
+                  totalOut: 0,
+                  totalReserved: 0,
+                  totalUnreserved: 0,
+                };
+              }
 
-            if (stock.type === "IN") {
-              stockMap[stock.productId][size].totalIn += quantity;
-            } else if (stock.type === "OUT") {
-              stockMap[stock.productId][size].totalOut += quantity;
-            } else if (stock.type === "RESERVED") {
-              stockMap[stock.productId][size].totalReserved += quantity;
-            } else if (stock.type === "UNRESERVED") {
-              stockMap[stock.productId][size].totalUnreserved += quantity;
-            }
+              // Update stock calculations
+              if (type === "IN") {
+                stockMap[productId][size].totalIn += quantity;
+              } else if (type === "OUT") {
+                stockMap[productId][size].totalOut += quantity;
+              } else if (type === "RESERVED") {
+                stockMap[productId][size].totalReserved += quantity;
+              } else if (type === "UNRESERVED") {
+                stockMap[productId][size].totalUnreserved += quantity;
+              }
+            });
           });
-        });
 
-        // Merge stock data into product details
-        const mergedData = productData.map((product) => {
-          const sizesData = stockMap[product._id] || {};
+            // Group products by SKU
+            const groupedProducts = {};
 
-          // Convert to UI-friendly format
-          const sizesObject = Object.keys(sizesData).reduce((acc, size) => {
-            acc[size] = Math.max(
-              sizesData[size].totalIn -
-                sizesData[size].totalOut -
-                (sizesData[size].totalReserved -
-                  sizesData[size].totalUnreserved),
-              0 // Ensure stock never goes negative
+            productData.forEach((product) => {
+              if (!product || !product._id) return;
+
+              const sizesData = stockMap[product._id] || {};
+              let productCol = productCollectionsData.find(
+                (item) => item?.productId === product._id
+              );
+
+              let skuId = null;
+
+              if (productCol) {
+                skuId = productCol.skuId;
+              }
+
+              let allrelatedProd = [];
+
+              if (skuId) {
+                allrelatedProd = productCollectionsData.filter(
+                  (item) => item?.skuId === skuId
+                );
+              }
+
+              let variations = [];
+              allrelatedProd.forEach((item) => {
+                if (!item || !item.productId) return;
+                let obj = productData.find(
+                  (item2) => item2?._id === item.productId
+                );
+                if (obj) {
+                  variations.push(obj);
+                }
+              });
+
+              if (!skuId) {
+                variations = [product];
+              }
+
+            let variation=  variations.map(item=>{
+                 const sizesData = stockMap[item._id] || {};
+
+                 // Calculate available stock per size
+                 const availableStock = Object.keys(sizesData).reduce(
+                   (acc, size) => {
+                     acc[size] = Math.max(
+                       sizesData[size].totalIn -
+                         sizesData[size].totalOut -
+                         (sizesData[size].totalReserved -
+                           sizesData[size].totalUnreserved),
+                       0 // Ensure stock doesn't go negative
+                     );
+                     return acc;
+                   },
+                   {}
+                 );
+
+                 // Ensure sizes object is initialized
+                 const initialSizes = product.size.sizes.reduce((acc, size) => {
+                   acc[size] = 0;
+                   return acc;
+                 }, {});
+                return {
+                  ...item,
+                  sizes:availableStock,
+                  sizes2:initialSizes
+                }
+              })
+
+    
+                  let selectedInd = variations.findIndex(ite =>ite._id == product._id)
+              // If product doesn't exist in groupedProducts, initialize it
+              if (!groupedProducts[product._id]) {
+                groupedProducts[product._id] = {
+                  _id: product._id,
+                  skuId: skuId,
+                  styleName: product.styleName || "Unknown Style",
+                  category: product.category || "Uncategorized",
+                  season: product.season || "",
+                  variations: variation.length > 0 ? variation : [product], // Include at least this product as a variation
+                  selectedIndex: selectedInd >= 0 ? selectedInd : 0, // Default to first variation
+                };
+              }
+            });
+
+            // Convert object to array and ensure variations have all required properties
+            const finalProducts = Object.values(groupedProducts).map(
+              (product) => {
+                // Make sure each variation has properly defined properties
+                const processedVariations = product.variations.map(
+                  (variation) => {
+                    // Ensure color object exists
+                    if (!variation.color) {
+                      variation.color = {
+                        hex: "#CCCCCC",
+                        colorName: "Default",
+                      };
+                    }
+
+                    // Ensure sizes exist
+                    if (!variation.sizes) {
+                      variation.sizes = {};
+
+                      // If product has size info, use it
+                      if (variation.size && variation.size.sizes) {
+                        variation.size.sizes.forEach((size) => {
+                          variation.sizes[size] = 0;
+                        });
+                      }
+                    }
+
+                    // Ensure sizes2 exists (for quantity selection)
+                    if (!variation.sizes2) {
+                      variation.sizes2 = { ...variation.sizes };
+                      // Reset quantities to 0
+                      Object.keys(variation.sizes2).forEach((size) => {
+                        variation.sizes2[size] = 0;
+                      });
+                    }
+
+                    // Ensure image exists
+                    if (!variation.image) {
+                      variation.image =
+                        variation.images?.image1 ||
+                        "https://via.placeholder.com/150";
+                    }
+
+                    return variation;
+                  }
+                );
+
+                return {
+                  ...product,
+                  variations: processedVariations,
+                };
+              }
             );
-            return acc;
-          }, {});
+              console.log(finalProducts)
+            setProducts(finalProducts);
 
-          const sizesObject2 = product.size.sizes.reduce((acc, size) => {
-            acc[size] = 0;
-            return acc;
-          }, {});
+            // Extract unique categories
+            const uniqueCategories = [
+              ...new Set(finalProducts.map((p) => p?.category).filter(Boolean)),
+            ];
+            setCategories(uniqueCategories);
+          } catch (error) {
+            console.error("Error fetching products", error);
+            toast.error("Failed to load products");
+          }
+        };
 
-          let colorObj = {
-            "#9900ff": "Purple",
-            "#ffff00": "Yellow",
-            "#000000": "Black",
-            "#ffffff": "White",
-            "#ff1493": "Deep Pink",
-            "#8b4513": "Brown",
-          };
-
-          const firstEntry = Object.entries(colorObj)[0];
-
-          return {
-            ...product,
-            sizes: sizesObject,
-            sizes2: sizesObject2,
-            colors: colorObj,
-            selectedColor: { hex: firstEntry[0], name: firstEntry[1] },
-            image: product.images?.image1 || "https://via.placeholder.com/150",
-            isSelected: false,
-          };
-        });
-
-        setProducts(mergedData);
-        // Extract unique categories
-        const uniqueCategories = [
-          ...new Set(mergedData.map((p) => p.category)),
-        ];
-        setCategories(uniqueCategories);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      }
-    };
     const fetchParty = async () => {
       try {
         const partyRes = await axios.get(
           `${config.API_URL}/api/master/getParty/`
         );
-        console.log(partyRes.data);
-        setParty(partyRes.data);
+        let option = partyRes.data.map((party) => ({
+          value: party,
+          label: party.companyName,
+        }));
+        setParty(option);
       } catch (error) {
         console.log(error);
       }
@@ -156,54 +264,78 @@ const Sales = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addProductToOrder = (product) => {
-    const allSizesZeroStock = Object.values(product.sizes).every(
-      (sizeData) => sizeData === 0
+  const addProductToOrder = (product, prodId, selectedIndex) => {
+    // Check if all sizes have zero stock
+    const isOutOfStock = Object.values(product.sizes).every((qty) => qty === 0);
+
+    if (isOutOfStock) {
+      toast.error("This product is out of stock!");
+      return;
+    }
+
+    // Get the selected color information
+    const selectedColor = {
+      hex: product.color.hex,
+      name: product.color.colorName,
+    };
+
+    // Generate a unique ID based on SKU & selected color
+    const productSelectionId = `${prodId}-${product.color.hex}`;
+
+    // Check if the same SKU & color combination is already added
+    const isProductAlreadyAdded = selectedProducts.some(
+      (p) => p.selectionId === productSelectionId
     );
 
-    // Generate a unique ID for this product selection (product ID + color)
-    const productSelectionId = `${product._id}-${product.selectedColor.hex}`;
-
-    // Check if this exact product + color combination already exists in the selection
-    const existingProductIndex = selectedProducts.findIndex(
-      (p) => `${p._id}-${p.selectedColor.hex}` === productSelectionId
-    );
-
-    if (existingProductIndex >= 0) {
-      // If already exists, you may want to update it or notify the user
+    if (isProductAlreadyAdded) {
       toast.info("This product with the same color is already in your order!");
       return;
     }
 
+    // Add product to selected list with all required properties
     setSelectedProducts((prev) => [
       ...prev,
       {
-        ...product,
-        sizes: { ...product.sizes },
-        selectedColor: product.selectedColor,
-        selectionId: productSelectionId, // Add a unique ID for this selection
+        // skuId: skuId,
+        styleName: products.find((p) => p._id === prodId).styleName,
+        price: product.price,
+        sizes: { ...product.sizes }, // Available stock
+        sizes2: { ...product.sizes2 }, // Selected quantities
+        image: product.image,
+        selectedColor: selectedColor, // Store selected color
+        selectionId: productSelectionId, // Unique identifier
+        _id: product._id, // Add product ID for stock reservation
       },
     ]);
 
+    // Reset search term if applicable
     setSearchTerm("");
   };
 
-  // Handle color selection
-  const handleColorSelect = (productId, hex, colorName) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p._id === productId
-          ? { ...p, selectedColor: { hex, name: colorName } }
-          : p
+  const handleColorSelect = (prodIndex, colorIndex) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product, index) =>
+        index === prodIndex
+          ? { ...product, selectedIndex: colorIndex }
+          : product
       )
     );
   };
 
-  const handleBuyerSelect = (buyer) => {
-    setFormData((prev) => ({ ...prev, buyer }));
-    setBuyerSearch("");
-    setShowBuyerDropdown(false);
+  useEffect(()=>{console.log(formData)},[formData])
+
+  const handleBuyerSelect = (buyers) => {
+    console.log(buyers.value)
+    let buyer = buyers.value
+    setSelectedBuyer(buyer.companyName);
+    setSelectedBuyerId(buyer._id)
+    setFormData((prev)=>({...prev,buyerId:buyer._id}))
+    setFormData((prev) => ({ ...prev, buyer: buyer.companyName }));
+    // setBuyerSearch("");
+    // setShowBuyerDropdown(false);
   };
+
+  useEffect(()=>{console.log(selectedBuyer)},[selectedBuyer])
 
   const removeProductFromOrder = (selectionId) => {
     setSelectedProducts((prev) =>
@@ -216,22 +348,22 @@ const Sales = () => {
       const updatedProducts = [...prev];
       const product = updatedProducts[index];
 
-      // Convert quantity to a number
-      const enteredQuantity = Number(quantity);
+      // Convert quantity to a number and ensure it's not negative
+      const enteredQuantity = Math.max(0, Number(quantity));
 
-      // Update available stock
-      product.sizes2[size] = enteredQuantity;
+      // Ensure it doesn't exceed available stock
+      const availableStock = product.sizes[size] || 0;
+      const finalQuantity = Math.min(enteredQuantity, availableStock);
+
+      // Update selected quantity
+      product.sizes2[size] = finalQuantity;
       return updatedProducts;
     });
   };
 
-  useEffect(() => {
-    console.log(selectedProducts, "selected Prod");
-  }, [selectedProducts]);
-
   const calculateProductTotal = (product) => {
     let total = 0;
-    Object.values(product.sizes2).forEach((quantity) => {
+    Object.entries(product.sizes2).forEach(([size, quantity]) => {
       total += Number(quantity) * Number(product.price || 0);
     });
     return total;
@@ -245,8 +377,6 @@ const Sales = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("selected prod", selectedProducts);
 
     // 1️⃣ Validate if all form fields are filled
     const requiredFields = [
@@ -292,6 +422,8 @@ const Sales = () => {
       if (hasValidQuantity) break; // Exit early if a valid size is found
     }
 
+
+
     if (!hasValidQuantity) {
       toast.error(
         "At least one selected product must have a quantity greater than 0."
@@ -299,19 +431,28 @@ const Sales = () => {
       return;
     }
 
+    // Prepare products data for reservation and order creation
+    const productsForReservation = selectedProducts.map((product) => {
+      return {
+        productId: product._id,
+        sizes: Object.entries(product.sizes2)
+          .filter(([_, qty]) => Number(qty) > 0)
+          .map(([size, qty]) => ({ size, quantity: Number(qty) })),
+      };
+    });
+
     const grandTotal = calculateGrandTotal();
     const orderData = {
       ...formData,
       products: selectedProducts,
       grandTotal,
     };
-
+    console.log(productsForReservation)
     try {
       // Reserve stock first
-      console.log(selectedProducts, "selected");
       const reserveResponse = await axios.post(
         `${config.API_URL}/api/gallery/reserveStock`,
-        { products: selectedProducts }
+        { products: productsForReservation }
       );
 
       if (reserveResponse.data.success) {
@@ -361,42 +502,23 @@ const Sales = () => {
               {key.replace("_", " ")}
             </label>
             {key === "buyer" ? (
-              <div className="relative">
-                <input
-                  type="text"
-                  name={key}
-                  value={buyerSearch || formData[key]}
-                  onChange={(e) => {
-                    setBuyerSearch(e.target.value);
-                    setShowBuyerDropdown(true);
-                  }}
-                  className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                {showBuyerDropdown && buyerSearch && (
-                  <ul className="absolute bg-white z-10 border border-green-200 w-full max-h-40 overflow-y-auto shadow-lg rounded-lg">
-                    {parties
-                      .filter((party) =>
-                        party.companyName
-                          .toLowerCase()
-                          .includes(buyerSearch.toLowerCase())
-                      )
-                      .map((party) => (
-                        <li
-                          key={party._id}
-                          className="p-3 hover:bg-green-50 cursor-pointer transition-colors"
-                          onClick={() => handleBuyerSelect(party.companyName)}
-                        >
-                          {party.companyName}
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </div>
+              <Select
+                options={parties}
+                value={selectedBuyer}
+                onChange={(selectedOption) => {
+                  handleBuyerSelect(selectedOption);
+                  setSelectedBuyer(selectedOption)
+                }}
+                placeholder="Search party..."
+                className="w-full"
+              />
             ) : (
-              <input
+
+               <input
                 type={key.includes("date") ? "date" : "text"}
                 name={key}
                 value={formData[key]}
+                readOnly={key=="buyerId"?true:false}
                 onChange={handleChange}
                 className="w-full border-2 border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
@@ -451,110 +573,122 @@ const Sales = () => {
           {/* Product Grid */}
           <div className="mt-4 overflow-y-auto max-h-[700px] border rounded-lg p-2">
             <div className="grid grid-cols-3 gap-4">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product._id}
-                  className="border-2 border-green-200 p-4 rounded-lg shadow relative hover:shadow-lg cursor-pointer"
-                >
-                  {/* Make the image and details clickable to add the product */}
-                  <div onClick={() => addProductToOrder(product)}>
-                    <img
-                      src={`${config.API_URL}${product.image}`}
-                      alt={product.styleName}
-                      className="w-full h-32 object-cover rounded"
-                    />
-                    <h4 className="text-center font-semibold mt-2">
-                      {product.styleName}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Price: ₹{product.price}
-                    </p>
+              {filteredProducts.map((product,prodIndex) => {
+                const selectedVariation =
+                  product.variations[product.selectedIndex];
 
-                    {/* Size & Qty Section */}
-                    <div className="border p-3 shadow-sm rounded-md bg-gray-50 my-2">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Size & Qty
+              
+
+                return (
+                  <div
+                    key={product._id}
+                    className="border-2 border-green-200 p-4 rounded-lg shadow relative hover:shadow-lg cursor-pointer"
+                  >
+                    {/* Image & Details Clickable for Adding to Order */}
+                    <div
+                      onClick={() =>
+                        addProductToOrder(
+                          selectedVariation,
+                          product.sku,
+                          product.selectedIndex
+                        )
+                      }
+                    >
+                      <img
+                        src={`${config.API_URL}${selectedVariation.image}`}
+                        alt={product.styleName}
+                        className="w-full h-32 object-cover rounded"
+                      />
+                      <h4 className="text-center font-semibold mt-2">
+                        {product.styleName}
                       </h4>
-                      {Object.keys(product.sizes).length === 0 ? (
-                        <p className="text-red-600 font-bold">Out of Stock</p>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
-                          {Object.keys(product.sizes).map((key) => (
-                            <div
-                              key={key}
-                              className="flex justify-between px-2 py-1 bg-white rounded-md shadow-sm"
-                            >
-                              <span className="font-medium">{key}</span>
-                              <span className="text-blue-600">
-                                {product.sizes[key]}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                      <p className="text-sm text-gray-600">
+                        Price: ₹{selectedVariation.price}
+                      </p>
 
-                  {/* Color Palettes with Click Functionality */}
-                  {product.colors && Object.keys(product.colors).length > 0 && (
-                    <div className="mt-2 border p-3 shadow-sm rounded-md bg-gray-50">
-                      {/* Color Label & Hover Name */}
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-700">
-                          Available Colors:
-                        </span>
-                        <span
-                          id={`color-name-${product._id}`}
-                          className="text-gray-600 font-semibold"
-                        ></span>
+                      {/* Size & Qty Section */}
+                      <div className="border p-3 shadow-sm rounded-md bg-gray-50 my-2">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                          Size & Qty
+                        </h4>
+                        {Object.keys(selectedVariation.sizes).length === 0 ? (
+                          <p className="text-red-600 font-bold">Out of Stock</p>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+                            {Object.keys(selectedVariation.sizes).map(
+                              (size) => (
+                                <div
+                                  key={size}
+                                  className="flex justify-between px-2 py-1 bg-white rounded-md shadow-sm"
+                                >
+                                  <span className="font-medium">{size}</span>
+                                  <span className="text-blue-600">
+                                    {selectedVariation.sizes[size]}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        )}
                       </div>
+                    </div>
 
-                      {/* Color Circles - now clickable */}
-                      <div className="flex flex-wrap justify-start gap-2 mt-1">
-                        {Object.entries(product.colors)
-                          .slice(0, 6)
-                          .map(([hex, name], index) => (
+                    {/* Color Selection */}
+                    {product.variations.length > 0 && (
+                      <div className="mt-2 border p-3 shadow-sm rounded-md bg-gray-50">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-700">
+                            Selected:
+                          </span>
+                          <span className="text-gray-900 font-semibold">
+                            {selectedVariation.color.colorName}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="font-medium text-gray-700">
+                            Available Colors:
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap justify-start gap-2 mt-1">
+                          {product.variations.map((variation, index) => ( 
                             <div
                               key={index}
                               className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer hover:scale-110 transition-transform"
                               style={{
-                                backgroundColor: hex,
-                                // Add a highlight for the selected color
+                                backgroundColor: variation.color.hex,
                                 boxShadow:
-                                  product.selectedColor?.hex === hex
+                                 product.selectedIndex === index
                                     ? "0 0 0 2px white, 0 0 0 4px #3b82f6"
                                     : "",
                               }}
-                              onMouseEnter={() => {
-                                document.getElementById(
-                                  `color-name-${product._id}`
-                                ).innerText = name;
-                              }}
-                              onMouseLeave={() => {
-                                document.getElementById(
-                                  `color-name-${product._id}`
-                                ).innerText = "";
-                              }}
                               onClick={(e) => {
-                                // Stop event propagation to prevent adding product to order
                                 e.stopPropagation();
-                                handleColorSelect(product._id, hex, name);
+                                handleColorSelect(prodIndex, index);
                               }}
                             ></div>
                           ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Add to Order button */}
-                  <button
-                    onClick={() => addProductToOrder(product)}
-                    className="w-full mt-3 py-2 rounded-lg text-white font-semibold transition-colors bg-[#310b6b] hover:bg-purple-800"
-                  >
-                    Add to Order
-                  </button>
-                </div>
-              ))}
+                    {/* Add to Order Button */}
+                    <button
+                      onClick={() =>
+                        addProductToOrder(
+                          selectedVariation,
+                          product._id,
+                          product.selectedIndex
+                        )
+                      }
+                      className="w-full mt-3 py-2 rounded-lg text-white font-semibold transition-colors bg-[#310b6b] hover:bg-purple-800"
+                    >
+                      Add to Order
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -608,23 +742,21 @@ const Sales = () => {
                           </button>
                         </div>
 
+                        {/* Price & Selected Color */}
                         <div className="text-sm text-gray-600 mb-2 flex justify-between">
                           <span>Price: ₹{product.price}</span>
-
-                          {/* Display selected color in the order */}
-                          {product.selectedColor && (
-                            <span className="inline-flex items-center">
-                              <span
-                                className="w-3 h-3 rounded-full mr-1"
-                                style={{
-                                  backgroundColor: product.selectedColor.hex,
-                                }}
-                              ></span>
-                              {product.selectedColor.name}
-                            </span>
-                          )}
+                          <span className="inline-flex items-center">
+                            <span
+                              className="w-4 h-4 rounded-full border border-gray-400 mr-2"
+                              style={{
+                                backgroundColor: product.selectedColor.hex,
+                              }}
+                            ></span>
+                            {product.selectedColor.name}
+                          </span>
                         </div>
 
+                        {/* Size & Quantity Selection */}
                         <div className="space-y-2">
                           {Object.keys(product.sizes2).map((size) => (
                             <div
@@ -637,7 +769,7 @@ const Sales = () => {
                               <div className="flex items-center">
                                 <input
                                   type="text"
-                                  max={product.sizes[size]}
+                                 
                                   value={product.sizes2[size]}
                                   onChange={(e) =>
                                     updateQuantity(index, size, e.target.value)
@@ -645,16 +777,14 @@ const Sales = () => {
                                   className="border px-2 py-1 rounded w-16 focus:ring focus:ring-green-300 text-center"
                                 />
                                 <span className="text-xs ml-2 text-gray-500">
-                                  Avail:{" "}
-                                  {product.sizes[size]
-                                    ? product.sizes[size]
-                                    : 0}
+                                  Avail: {product.sizes[size] || 0}
                                 </span>
                               </div>
                             </div>
                           ))}
                         </div>
 
+                        {/* Subtotal Calculation */}
                         <div className="mt-2 text-right border-t pt-2">
                           <p className="font-semibold">
                             Subtotal: ₹
@@ -665,6 +795,7 @@ const Sales = () => {
                     ))}
                   </ul>
 
+                  {/* Grand Total & Submit Button */}
                   <div className="mt-4 pt-4 border-t-2">
                     <div className="flex justify-between text-lg font-bold text-green-800">
                       <span>Grand Total:</span>
@@ -674,7 +805,7 @@ const Sales = () => {
                     <button
                       onClick={handleSubmit}
                       type="submit"
-                      className="w-full mt-4 bg-[#310b6b] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                      className="w-full mt-4 bg-[#310b6b] text-white px-6 py-3 rounded-lg hover:bg-purple-800 transition-colors font-semibold"
                     >
                       Submit Order
                     </button>

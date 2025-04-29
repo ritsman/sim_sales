@@ -2,23 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../../config";
-import { FaTrash, FaEdit, FaTimes, FaPlus } from "react-icons/fa";
+import { FaTrash, FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const ProductGallery = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [collections, setCollections] = useState([]);
-  const [selectedCollection, setSelectedCollection] = useState("all");
-  const [showAddToCollectionModal, setShowAddToCollectionModal] =
-    useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [newCollectionName, setNewCollectionName] = useState("");
-  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [subgroups, setSubgroups] = useState([]);
+  const [selectedSubgroup, setSelectedSubgroup] = useState("all");
 
   useEffect(() => {
     fetchProducts();
-    fetchCollections();
+    fetchSubgroups();
   }, []);
 
   const fetchProducts = async () => {
@@ -29,13 +24,9 @@ const ProductGallery = () => {
       const stockResponse = await axios.get(
         `${config.API_URL}/api/gallery/getStock/`
       );
-      const productCollectionsResponse = await axios.get(
-        `${config.API_URL}/api/gallery/getProductFromCollections/`
-      );
 
       const productData = productResponse.data;
       const stockData = stockResponse.data;
-      const productCollectionsData = productCollectionsResponse.data || [];
 
       // Process stock data: Aggregate IN, OUT, and RESERVED
       const stockMap = {};
@@ -67,12 +58,10 @@ const ProductGallery = () => {
         });
       });
 
-      // Merge stock data and collection data into product details
+      // Merge stock data into product details
       const mergedData = productData.map((product) => {
+        console.log(product, "product");
         const sizesData = stockMap[product._id] || {};
-        const productCollections = productCollectionsData
-          .filter((pc) => pc.productId === product._id)
-          .map((pc) => pc.collectionId);
 
         // Convert to UI-friendly format
         const sizesObject = Object.keys(sizesData).reduce((acc, size) => {
@@ -84,12 +73,17 @@ const ProductGallery = () => {
           );
           return acc;
         }, {});
-
+        let obj = {};
+        if (Object.keys(sizesObject).length === 0) {
+          product.size.sizes.map((item) => {
+            obj[item] = 0;
+            console.log(item);
+          });
+        }
         return {
           ...product,
-          sizes: sizesObject,
+          sizes: Object.keys(sizesObject).length === 0 ? obj : sizesObject,
           image: product.images?.image1 || "https://via.placeholder.com/150",
-          collections: productCollections,
         };
       });
 
@@ -99,133 +93,50 @@ const ProductGallery = () => {
     }
   };
 
-  const fetchCollections = async () => {
+  const fetchSubgroups = async () => {
     try {
       const response = await axios.get(
-        `${config.API_URL}/api/gallery/getProductCollections/`
+        `${config.API_URL}/api/master/getGroup/`
       );
-      setCollections(response.data);
-    } catch (error) {
-      console.error("Error fetching collections", error);
-    }
-  };
-
-  const createCollection = async () => {
-    if (!newCollectionName.trim()) return;
-
-    try {
-      await axios.post(`${config.API_URL}/api/gallery/createProductCollections/`, {
-        name: newCollectionName,
-      });
-      setNewCollectionName("");
-      fetchCollections();
-      toast.success("added new collection");
-    } catch (error) {
-      console.error("Error creating collection", error);
-      toast.error("error in adding new collection ");
-    }
-  };
-
-  const addProductToCollection = async (productId, collectionId) => {
-    try {
-      await axios.post(
-        `${config.API_URL}/api/gallery/addProductToCollection/`,
-        {
-          productId,
-          collectionId,
-        }
+      // Filter subgroups to only include those with type 'product'
+      const productSubgroups = response.data.filter(
+        (subgroup) => subgroup.type === "product"
       );
-      fetchProducts(); // Refresh product data to update collections
-      setShowAddToCollectionModal(false);
-      setSelectedProduct(null);
+      setSubgroups(productSubgroups);
     } catch (error) {
-      console.error("Error adding product to collection", error);
+      console.error("Error fetching subgroups", error);
     }
   };
 
-  const removeProductFromCollection = async (productId, collectionId) => {
-    try {
-      await axios.post(
-        `${config.API_URL}/api/gallery/removeProductFromCollection/`,
-        {
-          productId,
-          collectionId,
-        }
-      );
-      fetchProducts(); // Refresh product data
-    } catch (error) {
-      console.error("Error removing product from collection", error);
-    }
-  };
-
-  const openAddToCollectionModal = (product) => {
-    setSelectedProduct(product);
-    setShowAddToCollectionModal(true);
-  };
-
-  // Filter products based on selected collection
+  // Filter products based on selected subgroup
   const filteredProducts =
-    selectedCollection === "all"
+    selectedSubgroup === "all"
       ? products
-      : products.filter(
-          (product) =>
-            product.collections &&
-            product.collections.includes(selectedCollection)
-        );
+      : products.filter((product) => product.category == selectedSubgroup);
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6"> Product Gallery</h1>
+      <h1 className="text-3xl font-bold mb-6">Product Gallery</h1>
 
-      {/* Collection Filter and Add Collection */}
+      {/* Subgroup Filter */}
       <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
         <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Filter by Collection
+            Filter by group
           </label>
           <select
             className="w-full md:w-64 p-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            value={selectedCollection}
-            onChange={(e) => setSelectedCollection(e.target.value)}
+            value={selectedSubgroup}
+            onChange={(e) => setSelectedSubgroup(e.target.value)}
           >
             <option value="all">All Products</option>
-            {collections.map((collection) => (
-              <option key={collection._id} value={collection._id}>
-                {collection.name}
+            {subgroups.map((subgroup) => (
+              <option key={subgroup._id} value={subgroup.name}>
+                {subgroup.name}
               </option>
             ))}
           </select>
         </div>
-
-        <div className="">
-          <button
-            className=" mt-4 bg-[#310b6b] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
-            onClick={() => navigate("collection")}
-          >
-            Modify Collection
-          </button>
-        </div>
-
-        {/* <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Create New Collection
-          </label>
-          <div className="flex">
-            <input
-              type="text"
-              value={newCollectionName}
-              onChange={(e) => setNewCollectionName(e.target.value)}
-              className="rounded-l-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              placeholder="Collection name"
-            />
-            <button
-              onClick={createCollection}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <FaPlus className="mr-2" /> Add
-            </button>
-          </div>
-        </div> */}
       </div>
 
       {/* Products Grid */}
@@ -241,13 +152,6 @@ const ProductGallery = () => {
                 alt={product.styleName}
                 className="w-full h-40 object-cover rounded"
               />
-              <button
-                onClick={() => openAddToCollectionModal(product)}
-                className="absolute bottom-2 right-2 bg-indigo-600 text-white p-2 rounded-full shadow hover:bg-indigo-700"
-                title="Add to collection"
-              >
-                <FaPlus size={14} />
-              </button>
             </div>
 
             <h3 className="text-lg font-bold mt-2">{product.styleName}</h3>
@@ -255,33 +159,6 @@ const ProductGallery = () => {
               Category: {product.category}
             </p>
             <p className="text-sm text-gray-600">Price: ₹{product.price}</p>
-
-            {/* Collection Tags */}
-            {product.collections && product.collections.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {product.collections.map((collectionId) => {
-                  const collectionObj = collections.find(
-                    (c) => c._id === collectionId
-                  );
-                  return collectionObj ? (
-                    <div
-                      key={collectionId}
-                      className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full flex items-center"
-                    >
-                      {collectionObj.name}
-                      <button
-                        onClick={() =>
-                          removeProductFromCollection(product._id, collectionId)
-                        }
-                        className="ml-1 text-blue-600 hover:text-blue-800"
-                      >
-                        <FaTimes size={10} />
-                      </button>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            )}
 
             {/* Size & Qty Section */}
             <div className="border p-3 shadow-sm rounded-md bg-gray-50 mt-2">
@@ -313,84 +190,6 @@ const ProductGallery = () => {
           </div>
         ))}
       </div>
-
-      {/* Add to Collection Modal */}
-      {showAddToCollectionModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 max-w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Add to Collection</h3>
-              <button
-                onClick={() => setShowAddToCollectionModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <p className="mb-4">
-              Select collections for{" "}
-              <strong>{selectedProduct.styleName}</strong>:
-            </p>
-
-            <div className="max-h-60 overflow-y-auto">
-              {collections.length === 0 ? (
-                <p className="text-gray-500">
-                  No collections available. Create one first.
-                </p>
-              ) : (
-                collections.map((collection) => {
-                  const isInCollection =
-                    selectedProduct.collections &&
-                    selectedProduct.collections.includes(collection._id);
-
-                  return (
-                    <div
-                      key={collection._id}
-                      className="flex items-center mb-2"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`collection-${collection._id}`}
-                        checked={isInCollection}
-                        onChange={() => {
-                          if (isInCollection) {
-                            removeProductFromCollection(
-                              selectedProduct._id,
-                              collection._id
-                            );
-                          } else {
-                            addProductToCollection(
-                              selectedProduct._id,
-                              collection._id
-                            );
-                          }
-                        }}
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                      />
-                      <label
-                        htmlFor={`collection-${collection._id}`}
-                        className="ml-2 block text-sm text-gray-900"
-                      >
-                        {collection.name}
-                      </label>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowAddToCollectionModal(false)}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

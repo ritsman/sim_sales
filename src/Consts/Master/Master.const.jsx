@@ -86,6 +86,24 @@ const menu_master = {
       icon: "address card outline",
       nav: "/material/purchaseorder",
     },
+    {
+      key: 4,
+      name: "Purchase Order View",
+      icon: "address card outline",
+      nav: "/material/purchaseOrderView",
+    },
+    {
+      key: 5,
+      name: "GRN View",
+      icon: "address card outline",
+      nav: "/material/grnView",
+    },
+    {
+      key: 6,
+      name: "GSN View",
+      icon: "address card outline",
+      nav: "/material/gsnView",
+    },
   ],
   money: [
     {
@@ -231,6 +249,26 @@ const menu_master = {
       name: "Shipment",
       icon: "address card outline",
       nav: "/shipment",
+    },
+  ],
+  shipment: [
+    {
+      key: 0,
+      name: "Shipment",
+      icon: "address card outline",
+      nav: "/shipment",
+    },
+    {
+      key: 1,
+      name: "Dispatch",
+      icon: "address card outline",
+      nav: "/shipment/dispatch",
+    },
+    {
+      key: 2,
+      name: "Invoice",
+      icon: "address card outline",
+      nav: "/shipment/invoice",
     },
   ],
 };

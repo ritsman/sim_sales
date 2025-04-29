@@ -5,7 +5,7 @@ import config from "../../config";
 import { FaTrash, FaEdit, FaTimes, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-const Gallery = () => {
+const ProductGallery = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [collections, setCollections] = useState([]);
@@ -30,7 +30,7 @@ const Gallery = () => {
         `${config.API_URL}/api/gallery/getStock/`
       );
       const productCollectionsResponse = await axios.get(
-        `${config.API_URL}/api/gallery/getProductCollections/`
+        `${config.API_URL}/api/gallery/getProductFromCollections/`
       );
 
       const productData = productResponse.data;
@@ -69,6 +69,7 @@ const Gallery = () => {
 
       // Merge stock data and collection data into product details
       const mergedData = productData.map((product) => {
+        console.log(product, "product");
         const sizesData = stockMap[product._id] || {};
         const productCollections = productCollectionsData
           .filter((pc) => pc.productId === product._id)
@@ -84,10 +85,16 @@ const Gallery = () => {
           );
           return acc;
         }, {});
-
+        let obj = {};
+        if (Object.keys(sizesObject).length === 0) {
+          product.size.sizes.map((item) => {
+            obj[item] = 0;
+            console.log(item);
+          });
+        }
         return {
           ...product,
-          sizes: sizesObject,
+          sizes: Object.keys(sizesObject).length === 0 ? obj : sizesObject,
           image: product.images?.image1 || "https://via.placeholder.com/150",
           collections: productCollections,
         };
@@ -102,7 +109,7 @@ const Gallery = () => {
   const fetchCollections = async () => {
     try {
       const response = await axios.get(
-        `${config.API_URL}/api/gallery/getCollections/`
+        `${config.API_URL}/api/gallery/getProductCollections/`
       );
       setCollections(response.data);
     } catch (error) {
@@ -114,9 +121,12 @@ const Gallery = () => {
     if (!newCollectionName.trim()) return;
 
     try {
-      await axios.post(`${config.API_URL}/api/gallery/createCollections/`, {
-        name: newCollectionName,
-      });
+      await axios.post(
+        `${config.API_URL}/api/gallery/createProductCollections/`,
+        {
+          name: newCollectionName,
+        }
+      );
       setNewCollectionName("");
       fetchCollections();
       toast.success("added new collection");
@@ -175,6 +185,8 @@ const Gallery = () => {
 
   return (
     <div className="p-6">
+      <h1 className="text-3xl font-bold mb-6"> Product Gallery</h1>
+
       {/* Collection Filter and Add Collection */}
       <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
         <div className="flex-1">
@@ -393,4 +405,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default ProductGallery;

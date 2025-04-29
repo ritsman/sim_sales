@@ -11,6 +11,7 @@ const fetchUnits = async () => {
 
   try {
     let res = await axios.get(`${config.API_URL}/api/master/getUnit`);
+
     console.log(res.data);
     result = [...res.data];
   } catch (error) {
@@ -25,8 +26,9 @@ const AddItems = () => {
   const location = useLocation();
   const editingItem = location.state?.item || null; // Check if editing
   const isEditing = !!editingItem;
-  const [image , setImage] = useState(null);
-  const [previewImage, setPreviewImage]  = useState(null)
+  const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [groups , setGroups] = useState([])
   const [formData, setFormData] = useState({
     itemName: "",
     itemType: "",
@@ -43,9 +45,9 @@ const AddItems = () => {
     moq: "0",
     msc1: "",
     msc2: "",
+    group:"",
     specification: "0",
     user: "",
-
   });
 
   const navigate = useNavigate();
@@ -60,6 +62,22 @@ const AddItems = () => {
     loadUnits();
   }, []);
 
+  useEffect(()=>{
+        const fetchGroup = async()=>{
+             try {
+              let res = await axios.get(`${config.API_URL}/api/master/getGroup`);
+               const itemGroup = res.data.filter(
+                (group) => group.type === "item"
+                    );   
+                    setGroups(itemGroup)        
+                      
+                      } catch (error) {
+                     console.log(error);
+             }
+        }
+        fetchGroup();
+  },[])
+
   useEffect(() => {
     // If editing, populate the form with the item data
     if (editingItem) {
@@ -71,9 +89,9 @@ const AddItems = () => {
         purchaseUnit:
           editingItem.purchaseUnit?._id || editingItem.purchaseUnit || "",
       }));
-       if (editingItem.image) {
-         setPreviewImage(`${config.API_URL}${editingItem.image}`);
-       }
+      if (editingItem.image) {
+        setPreviewImage(`${config.API_URL}${editingItem.image}`);
+      }
     }
   }, [editingItem]);
 
@@ -108,10 +126,10 @@ const AddItems = () => {
     if (image) {
       formDataToSend.append("image", image);
     }
-     console.log("FormData entries:");
-     for (let pair of formDataToSend.entries()) {
-       console.log(pair[0], pair[1]);
-     }
+    console.log("FormData entries:");
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0], pair[1]);
+    }
     try {
       if (editingItem) {
         await axios.put(
@@ -172,6 +190,7 @@ const AddItems = () => {
             id="itemName"
             value={formData.itemName}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -186,6 +205,7 @@ const AddItems = () => {
             placeholder="Item Type*"
             value={formData.itemType}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -202,6 +222,7 @@ const AddItems = () => {
             id="itemColor"
             value={formData.itemColor}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -220,6 +241,7 @@ const AddItems = () => {
             placeholder="Item Select*"
             value={formData.itemSelect}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -234,6 +256,7 @@ const AddItems = () => {
             placeholder="GST*"
             value={formData.gst}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -248,6 +271,7 @@ const AddItems = () => {
             placeholder="HSN_Code*"
             value={formData.hsnCode}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -262,6 +286,7 @@ const AddItems = () => {
             id="rate"
             value={formData.rate}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -307,6 +332,7 @@ const AddItems = () => {
             id="bufferUnit"
             value={formData.bufferUnit}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -324,6 +350,7 @@ const AddItems = () => {
             id="openingStock"
             value={formData.openingStock}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -369,6 +396,7 @@ const AddItems = () => {
             id="purchaseIssueRatio"
             value={formData.purchaseIssueRatio}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -383,6 +411,7 @@ const AddItems = () => {
             id="moq"
             value={formData.moq}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -397,6 +426,7 @@ const AddItems = () => {
             placeholder="Msc1*"
             value={formData.msc1}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -411,8 +441,29 @@ const AddItems = () => {
             placeholder="Msc2*"
             value={formData.msc2}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="group" className="block text-gray-700 font-medium">
+            Group
+          </label>
+          <select
+            className="w-full border px-3 py-2 rounded focus:ring focus:ring-blue-300"
+            value={formData.group}
+            id="group"
+            onChange={handleInputChange}
+          >
+            <option value="">Select group</option>
+            {groups.map((group) => {
+              return (
+                <option key={group._id} value={group.name}>
+                  {group.name}
+                </option>
+              );
+            })}
+          </select>
         </div>
 
         <div className="space-y-2">
@@ -427,6 +478,7 @@ const AddItems = () => {
             id="specification"
             value={formData.specification}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -441,6 +493,7 @@ const AddItems = () => {
             placeholder="User*"
             value={formData.user}
             onChange={handleInputChange}
+            required={true}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

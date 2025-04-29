@@ -7,52 +7,67 @@ const AddProcess = () => {
   let navigate = useNavigate();
   const [processName, setProcessName] = useState("");
   const [selectedActivities, setSelectedActivities] = useState([]);
-  const [activities,setActivity] = useState([
-  
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [group , setGroup] = useState("");
+  const [activities, setActivity] = useState([]);
 
   const handleAddActivity = (event) => {
-    const activityId = (event.target.value);
-    console.log(activityId)
+    const activityId = event.target.value;
+    console.log(activityId);
     const activity = activities.find((act) => act._id === activityId);
     if (activity && !selectedActivities.some((act) => act._id === activityId)) {
       setSelectedActivities([...selectedActivities, activity]);
     }
   };
 
-  useEffect(()=>{
-     console.log(selectedActivities)
-  },[selectedActivities])
+  useEffect(() => {
+    const fetchGroup = async () => {
+      try {
+        const categoryRes = await axios.get(
+          `${config.API_URL}/api/master/getGroup`
+        );
+        setCategories([...categoryRes.data]);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchGroup();
+  });
 
-  useEffect(()=>{
-    let fetchActivity = async()=>{
-   try {
-    let res = await axios.get(
-      `${config.API_URL}/api/master/getActivity/`
-    );
-    console.log(res.data);
-    setActivity(res.data);
-    
-   } catch (error) {
-    console.log(error);
-   }
-    }
+  useEffect(() => {
+    console.log(selectedActivities);
+  }, [selectedActivities]);
+
+  useEffect(() => {
+    let fetchActivity = async () => {
+      try {
+        let res = await axios.get(`${config.API_URL}/api/master/getActivity/`);
+        console.log(res.data);
+        setActivity(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchActivity();
-  },[])
+  }, []);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const processData = {
       processName,
       activities: selectedActivities,
+      group
     };
     console.log("Process Data:", processData);
 
     try {
-      let res = await axios.post(`${config.API_URL}/api/master/addProcess/`,processData);
+      let res = await axios.post(
+        `${config.API_URL}/api/master/addProcess/`,
+        processData
+      );
       console.log(res);
       navigate(-1);
-    } catch (error ) {
+    } catch (error) {
       console.log(error);
     }
   };
@@ -70,6 +85,26 @@ const AddProcess = () => {
             className="w-full p-2 border rounded"
             required
           />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium">Group</label>
+          <select
+            className="w-full border px-3 py-2 rounded focus:ring focus:ring-blue-300"
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            name="group"
+          >
+            <option value="">Select group</option>
+            {categories.map((cat) => {
+              if (cat.type == "process") {
+                return (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                );
+              }
+            })}
+          </select>
         </div>
 
         <div className="mb-4">

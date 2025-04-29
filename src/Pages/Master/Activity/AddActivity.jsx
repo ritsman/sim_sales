@@ -6,11 +6,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 const AddActivity = () => {
   const navigate = useNavigate();
   const location = useLocation();
+    const [categories, setCategories] = useState([]);
+
   const [formData, setFormData] = useState({
     activityName: "",
     description: "",
     time: "",
     cost: "",
+    group:""
   });
 
   useEffect(() => {
@@ -23,6 +26,21 @@ const AddActivity = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(()=>{
+    const fetchGroup = async()=>{
+      try {
+        const categoryRes = await axios.get(
+          `${config.API_URL}/api/master/getGroup`
+        );
+      setCategories([...categoryRes.data]);
+
+      }catch(err){
+        console.log(err)
+      }
+    }
+    fetchGroup()
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,6 +114,26 @@ const AddActivity = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Group</label>
+          <select
+            className="w-full border px-3 py-2 rounded focus:ring focus:ring-blue-300"
+            value={formData.group}
+            onChange={handleChange}
+            name="group"
+          >
+            <option value="">Select group</option>
+            {categories.map((cat) => {
+              if (cat.type == "activity") {
+                return (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                );
+              }
+            })}
+          </select>
         </div>
         <div className="flex gap-5">
           <button

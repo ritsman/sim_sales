@@ -16,6 +16,7 @@ const ItemsInventory = () => {
   });
   const [hoveredItems, setHoveredItems] = useState(null);
   const popupRef = useRef(null);
+  const navigate = useNavigate()
 
   // Fetch product data from API
   const fetchItems = async () => {
@@ -27,13 +28,22 @@ const ItemsInventory = () => {
         `${config.API_URL}/api/master/getItemStock/`
       );
 
+        const response3 = await axios.get(
+          `${config.API_URL}/api/master/getTotalItemStockForAll`
+        );
+
+
       let mergedItems = response1.data.map((item) => {
         let stock = response2.data.stockData.find(
           (stock) => stock.itemId == item._id
         );
+                 let itemStock = response3.data.find(
+                   (stock) => stock.itemId == item._id
+                 );
+
         return {
           ...item,
-             availableStock: stock?.availableStock ?? 0,
+          availableStock: itemStock?.totalQuantity ?? 0,
         };
       });
       console.log(mergedItems);
@@ -194,6 +204,14 @@ const ItemsInventory = () => {
                 {/* {sortConfig.key === "price" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")} */}
               </th>
+              <th
+                className="py-2 px-3 border text-left cursor-pointer hover:bg-gray-200"
+                // onClick={() => requestSort("price")}
+              >
+                Unit{" "}
+                {/* {sortConfig.key === "price" &&
+                  (sortConfig.direction === "ascending" ? "↑" : "↓")} */}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -212,6 +230,7 @@ const ItemsInventory = () => {
                     className="py-2 px-3 border cursor-pointer"
                     onMouseEnter={() => setHoveredItems(item)}
                     onMouseLeave={() => setHoveredItems(null)}
+                    onClick={() => navigate(`stock-entries/${item._id}`)}
                   >
                     <span className="text-blue-600 ">{item.itemName}</span>{" "}
                   </td>
@@ -221,6 +240,7 @@ const ItemsInventory = () => {
                   <td className="py-2 px-3 border">{item.hsnCode}</td>
                   <td className="py-2 px-3 border">{item.rate}</td>
                   <td className="py-2 px-3 border">{item.availableStock}</td>
+                  <td className="py-2 px-3 border">{item.issueUnit}</td>
                 </tr>
               </React.Fragment>
             ))}
@@ -230,15 +250,13 @@ const ItemsInventory = () => {
 
       {filteredItems.length === 0 && (
         <div className="text-center py-4 text-gray-500">
-          No items found.{" "}
-          {searchTerm && "Try adjusting your search criteria."}
+          No items found. {searchTerm && "Try adjusting your search criteria."}
         </div>
       )}
 
       <div className="mt-4 text-gray-600 text-sm">
         Showing {filteredItems.length} of {items.length} Items
-        {selectedItems.length > 0 &&
-          ` (${selectedItems.length} selected)`}
+        {selectedItems.length > 0 && ` (${selectedItems.length} selected)`}
       </div>
     </div>
   );

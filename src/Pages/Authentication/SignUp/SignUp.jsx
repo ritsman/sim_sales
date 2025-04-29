@@ -53,8 +53,9 @@ const SignUp = () => {
           {/* Logo section */}
           <div className="flex justify-center pt-8 pb-6">
             <div className="flex items-center">
-              <div className="text-gray-200 uppercase text-2xl font-bold">
-                Login
+              <div className="text-gray-200 flex items-center gap-2 uppercase text-2xl font-bold">
+                <img src="\logo-removebg-preview.png" className="h-12 w-12 " />
+                <span>Sign Up</span>
               </div>
             </div>
           </div>
@@ -87,7 +88,7 @@ const SignUp = () => {
                   <input
                     type="text"
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your Email"
+                    placeholder="Name"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
@@ -116,7 +117,7 @@ const SignUp = () => {
                   <input
                     type="text"
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your Email"
+                    placeholder="Email"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
@@ -145,7 +146,7 @@ const SignUp = () => {
                   <input
                     type="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder="password"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>
@@ -173,7 +174,7 @@ const SignUp = () => {
                   <input
                     type="password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Enter your confirm password"
+                    placeholder="confirm password"
                     className="bg-white text-gray-800 placeholder-gray-400 focus:outline-none w-full"
                   />
                 </div>

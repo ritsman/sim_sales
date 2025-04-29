@@ -79,6 +79,8 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
         return menu_master.sales;
       case "gallery":
         return menu_master.gallery;
+      case "shipment":
+        return menu_master.shipment;
       default:
         return menu_items_default;
     }
@@ -89,7 +91,7 @@ export default function SidebarCom({ visible, change, sidemenu2 }) {
     <>
       <Sidebar.Pushable
         as={Segment}
-        style={{ height: "100vh", display: "flex" }}
+        // style={{ height: "100vh", display: "flex" }}
       >
         <Sidebar
           as={Menu}

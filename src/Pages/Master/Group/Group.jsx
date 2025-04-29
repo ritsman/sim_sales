@@ -20,7 +20,7 @@ const Group = () => {
         const response = await axios.get(
           `${config.API_URL}/api/master/getGroup`
         );
-        setGroups([...options2,...response.data]);
+        setGroups([...response.data]);
       } catch (error) {
         console.error("Error fetching groups:", error);
       }
@@ -58,15 +58,18 @@ const Group = () => {
             <thead>
               <tr className="bg-gray-200 text-left">
                 <th className="border px-4 py-2">Group Name</th>
-                <th className="border px-4 py-2">Under</th>
-                <th className="border px-4 py-2 text-center">Actions</th>
+                <th className="border px-4 py-2">Sub groups</th>
+                <th className="border px-4 py-2 text-center">Type</th>
+                <th className="border px-4 py-2 text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {groups.map((group) => (
                 <tr key={group._id} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2">{group.groupName}</td>
-                  <td className="border px-4 py-2">{group.under}</td>
+                  <td className="border px-4 py-2">{group.name}</td>
+                  <td className="border px-4 py-2">{group.subgroup}</td>
+                  <td className="border px-4 py-2">{group.type}</td>
+
                   <td className="border px-4 py-2 text-center">
                     <button
                       onClick={() =>
@@ -80,13 +83,14 @@ const Group = () => {
                       <>
                         <button
                           onClick={() =>
-                            navigate("addGroup", {
-                              state: {
-                                groupName: group.groupName,
-                                under: group.under,
-                                id: group._id,
-                              },
-                            })
+                        
+                            navigate("addGroup", { state: { editGroup: {
+                                   name: group.name,
+                                   type: group.type,
+                                   subgroup:group.subgroup,
+                                   id: group._id,
+                            } } })
+
                           }
                           className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2"
                         >

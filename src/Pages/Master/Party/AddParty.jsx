@@ -110,7 +110,9 @@ createdAt, ...filteredData } = editingParty;
                 className="border px-3 py-2 rounded focus:ring focus:ring-blue-300"
               >
                 <option value="Buyer">Buyer</option>
-                <option value="Seller">Seller</option>
+                <option value="Supplier">Supplier</option>
+                <option value="Vender">Vender</option>
+                <option value="Employer">Employer</option>
               </select>
             ) : key === "state" ? (
               <select
