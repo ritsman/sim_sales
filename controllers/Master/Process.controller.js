@@ -2,8 +2,8 @@ import { Process } from "../../model/Master/Process.model.js";
 
 export const addProcess = async(req,res)=>{
   try {
-    const { processName, activities } = req.body;
-    const newProcess = new Process({ processName, activities });
+    const { processName, activities,group } = req.body;
+    const newProcess = new Process({ processName, activities,group });
     await newProcess.save();
     res.status(201).json({ message: "Process added successfully", newProcess });
   } catch (error) {

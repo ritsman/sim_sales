@@ -87,6 +87,10 @@ export const getShipment = async(req,res)=>{
      products: shipment.products.map((product) => ({
        productId: product.productId, // No need to change, already stored correctly
        size: product.size,
+       styleName:product.description,
+       quantity:product.quantity,
+       unitPrice:product.unitPrice,
+       amount:product.amount,
        dispatched_quantity: product.dispatched_quantity,
      })),
      createdAt: shipment.createdAt,

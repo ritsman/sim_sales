@@ -1,18 +1,20 @@
 import Group from "../../model/Master/Group.model.js";
 export const createGroup = async(req,res) => {
  try {
-   let existing = await Group.findOne({ groupName: req.body.groupName });
+   let existing = await Group.findOne({ name: req.body.name });
 
    if (!existing) {
      let result = new Group({
-       selectedItems: req.body.selectedItems,
-       groupName: req.body.groupName,
-       under: req.body.under,
+       name: req.body.name,
+       type: req.body.type,
+       subgroup: req.body.subgroup,
      });
      await result.save();
    } else {
 
-     existing.under = req.body.under;
+     existing.type = req.body.type;
+     existing.subgroup = req.body.subgroup;
+
      await existing.save(); // Save the changes to the existing document
    }
    res.send("Data sent successfully");

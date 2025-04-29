@@ -11,6 +11,14 @@ const ShipmentSchema = new mongoose.Schema({
         required: true,
       },
       size: { type: String, required: true },
+      description: { type: String, required: false },
+
+      quantity: { type: Number, required: false },
+
+      unitPrice: { type: String, required: false },
+      tax: { type: Number, required: false },
+      amount: { type: Number, required: false },
+
       dispatched_quantity: { type: Number, required: true },
     },
   ],

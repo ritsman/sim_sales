@@ -7,6 +7,17 @@ const GroupSchema = new mongoose.Schema({
   selectedItems:Array
 });
 
-const Group = mongoose.model("Group", GroupSchema);
+// const Group = mongoose.model("Group", GroupSchema);
 
-export default Group;
+// export default Group;
+
+const groupSchema = new mongoose.Schema({
+  name: String,
+  type: String,
+  subgroup: String,
+});
+
+ const Group = mongoose.model("Group", groupSchema);
+ export default Group;
+
+

@@ -20,6 +20,7 @@ const itemSchema = new mongoose.Schema(
     specification: { type: String, required: false },
     user: { type: String, required: false },
     image: { type: String, required: false },
+    group: { type: String, required: true },
   },
   { timestamps: true }
 );

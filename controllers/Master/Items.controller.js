@@ -323,9 +323,9 @@ export const getTotalStockForAllItems = async (req, res) => {
     // Fetch all stock entries
     const stockEntries = await ItemsStock.find();
 
-    if (!stockEntries.length) {
-      return res.status(404).json({ message: "No stock entries found." });
-    }
+    // if (!stockEntries.length) {
+    //   return res.status(404).json({ message: "No stock entries found." });
+    // }
 
     // Create an object to store total quantities per itemId
     const totalStockMap = {};

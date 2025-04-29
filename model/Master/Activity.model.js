@@ -5,6 +5,7 @@ const activitySchema = new mongoose.Schema({
   description: { type: String, required: true },
   time: { type: Number, required: true },
   cost: { type: Number, required: true },
+  group: { type: String, required: false },
 });
 
 export const Activity = mongoose.model("Activity", activitySchema);
