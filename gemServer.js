@@ -14,10 +14,10 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(router);
 
-app.listen(3020, (err) => {
+app.listen(3024, (err) => {
   if (err) {
     console.log("error in running express server");
     return;
   }
-  console.log("express server is running on port 3020");
+  console.log("express server is running on port 3024");
 });
