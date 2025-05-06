@@ -589,7 +589,7 @@ const Sales = () => {
                       onClick={() =>
                         addProductToOrder(
                           selectedVariation,
-                          product.sku,
+                          product._id,
                           product.selectedIndex
                         )
                       }
