@@ -212,9 +212,13 @@ const Sales = () => {
 
                     // Ensure image exists
                     if (!variation.image) {
-                      variation.image =
-                        variation.images?.image1 ||
-                        "https://via.placeholder.com/150";
+                      // variation.image =
+                      //   variation.images?.image1 ||
+                      //   "https://via.placeholder.com/150";
+
+                        variation.image = variation.images?.image1
+                          ? `${config.API_URL}${variation.images.image1}`
+                          : "https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg";
                     }
 
                     return variation;
@@ -595,7 +599,7 @@ const Sales = () => {
                       }
                     >
                       <img
-                        src={`${config.API_URL}${selectedVariation.image}`}
+                        src={`${selectedVariation.image}`}
                         alt={product.styleName}
                         className="w-full h-32 object-cover rounded"
                       />
@@ -652,14 +656,14 @@ const Sales = () => {
                         </div>
 
                         <div className="flex flex-wrap justify-start gap-2 mt-1">
-                          {product.variations.map((variation, index) => ( 
+                          {product.variations.map((variation, index) => (
                             <div
                               key={index}
                               className="w-6 h-6 rounded-full border border-gray-400 shadow-sm cursor-pointer hover:scale-110 transition-transform"
                               style={{
                                 backgroundColor: variation.color.hex,
                                 boxShadow:
-                                 product.selectedIndex === index
+                                  product.selectedIndex === index
                                     ? "0 0 0 2px white, 0 0 0 4px #3b82f6"
                                     : "",
                               }}
@@ -682,7 +686,14 @@ const Sales = () => {
                           product.selectedIndex
                         )
                       }
-                      className="w-full mt-3 py-2 rounded-lg text-white font-semibold transition-colors bg-[#310b6b] hover:bg-purple-800"
+                      disabled={
+                        Object.keys(selectedVariation.sizes).length === 0
+                      }
+                      className={`w-full mt-3 py-2 rounded-lg text-white font-semibold transition-colors ${
+                        Object.keys(selectedVariation.sizes).length === 0
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-[#310b6b] hover:bg-purple-800 cursor-pointer"
+                      }`}
                     >
                       Add to Order
                     </button>

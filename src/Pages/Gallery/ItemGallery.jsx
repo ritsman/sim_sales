@@ -49,8 +49,8 @@ const ItemGallery = () => {
         return {
           ...product,
           availableStock: itemStock?.totalQuantity ?? 0,
-          image:
-            product.image ||
+          image:product.image ?
+            `${config.API_URL}${product.image}` :
             "https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg",
         };
       });
@@ -101,8 +101,9 @@ const ItemGallery = () => {
             className="border rounded-lg p-4 shadow-lg bg-white"
           >
             <div className="relative">
+           
               <img
-                src={`${config.API_URL}${product.image}`}
+                src={`${product.image}`}
                 alt={product.styleName}
                 className="w-full h-40 object-cover rounded"
               />

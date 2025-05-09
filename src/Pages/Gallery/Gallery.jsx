@@ -4,15 +4,23 @@ import { Link } from "react-router-dom";
 
 const Gallery = () => {
   let cards = [
-     {
-       name: "Product Gallery",
-       path: "productGallery",
-     },
-     {
-       name: "Item Gallery",
-       path: "itemGallery",
-     },
-   ];
+    {
+      name: "Product Gallery",
+      path: "productGallery",
+    },
+    {
+      name: "Item Gallery",
+      path: "itemGallery",
+    },
+    {
+      name: "Process Gallery",
+      path: "processGallery",
+    },
+    {
+      name: "Activity Gallery",
+      path: "activityGallery",
+    },
+  ];
    return (
      <div>
        <div

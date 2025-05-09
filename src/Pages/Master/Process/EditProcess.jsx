@@ -1,16 +1,44 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../../../config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddProcess = () => {
-  let navigate = useNavigate();
+const EditProcess = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [processName, setProcessName] = useState("");
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [categories, setCategories] = useState([]);
   const [processGroup, setProcessGroup] = useState("");
   const [activities, setActivities] = useState([]);
   const [activityGroups, setActivityGroups] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch the specific process data
+  useEffect(() => {
+    const fetchProcessData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(
+          `${config.API_URL}/api/master/getProcess/${id}`
+        );
+
+        console.log(response)
+        const process = response.data;
+
+        setProcessName(process?.processName || "");
+        setProcessGroup(process?.group || "");
+        setSelectedActivities(process?.activities || []);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching process data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProcessData();
+  }, [id]);
 
   // Fetch categories (process groups)
   useEffect(() => {
@@ -25,7 +53,7 @@ const AddProcess = () => {
       }
     };
     fetchGroup();
-  }, []); // Added empty dependency array to prevent infinite loop
+  }, []);
 
   // Fetch activities and organize them by group
   useEffect(() => {
@@ -33,6 +61,7 @@ const AddProcess = () => {
       try {
         let res = await axios.get(`${config.API_URL}/api/master/getActivity/`);
         setActivities(res.data);
+        console.log(res);
 
         // Organize activities by group for easy selection
         const groups = {};
@@ -52,6 +81,8 @@ const AddProcess = () => {
 
   const handleAddActivity = (event) => {
     const activityId = event.target.value;
+    if (!activityId) return;
+
     const activity = activities.find((act) => act._id === activityId);
     if (activity && !selectedActivities.some((act) => act._id === activityId)) {
       setSelectedActivities([...selectedActivities, activity]);
@@ -89,20 +120,27 @@ const AddProcess = () => {
     };
 
     try {
-      let res = await axios.post(
-        `${config.API_URL}/api/master/addProcess/`,
+      await axios.put(
+        `${config.API_URL}/api/master/updateProcess/${id}`,
         processData
       );
-      console.log(res);
       navigate(-1);
     } catch (error) {
-      console.log(error);
+      console.error("Error updating process:", error);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg font-medium">Loading process data...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-md">
-      <h2 className="text-lg font-semibold mb-4">Create Process</h2>
+      <h2 className="text-lg font-semibold mb-4">Edit Process</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block font-medium">Process Name</label>
@@ -205,14 +243,14 @@ const AddProcess = () => {
             type="submit"
             className="w-full bg-[#310b6b] text-white p-2 rounded hover:bg-blue-600"
           >
-            Submit Process
+            Update Process
           </button>
           <button
             type="button"
             onClick={() => navigate(-1)}
             className="w-full bg-[#310b6b] text-white p-2 rounded hover:bg-blue-600"
           >
-            Go Back
+            Cancel
           </button>
         </div>
       </form>
@@ -220,4 +258,4 @@ const AddProcess = () => {
   );
 };
 
-export default AddProcess;
+export default EditProcess;

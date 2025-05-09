@@ -1,135 +1,36 @@
-import React, { useState } from "react";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-//import Card from "../../Components/Card";
-import {
-  CardMeta,
-  CardHeader,
-  CardGroup,
-  CardDescription,
-  CardContent,
-  Card,
-} from "semantic-ui-react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import config from "../../config";
 import { useNavigate } from "react-router-dom";
-
-const initialTasks = [
-  {
-    id: "1",
-    title: "Task 1",
-    priority: 1,
-    completed: "20%",
-    activity: "Do it",
-  },
-  {
-    id: "5",
-    title: "Task 1A",
-    priority: 1,
-    completed: "20%",
-    activity: "Do it",
-  },
-  {
-    id: "2",
-    title: "Task 2",
-    priority: 2,
-    completed: "20%",
-    activity: "Do it",
-  },
-  {
-    id: "3",
-    title: "Task 3",
-    priority: 2,
-    completed: "20%",
-    activity: "Do it",
-  },
-  {
-    id: "4",
-    title: "Task 4",
-    priority: 3,
-    completed: "20%",
-    activity: "Do it",
-  },
-];
-
-// const intialTasks=[
-//     {id,name,description,time,cost}
-// ];
-
-const SortableItem = ({ task }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: task.id });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <Card>
-        <CardContent>
-          <CardHeader content={task.title} />
-          <CardMeta content={task.completed} />
-          <CardDescription
-            content={`this task is priority ${task.priority},${task.activity}`}
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+import { set } from "lodash";
+import { Link } from "react-router-dom";
 
 const WorkflowBoard = () => {
-    const navigate = useNavigate();
-  const [tasks, setTasks] = useState(initialTasks);
+  const navigate = useNavigate();
+  const [workOrders, setWorkOrders] = useState([]);
 
-  //   const onDragEnd = (event) => {
-  //     const { active, over } = event;
-  //     if (active.id !== over.id) {
-  //       const oldIndex = tasks.findIndex((task) => task.id === active.id);
-  //       const newIndex = tasks.findIndex((task) => task.id === over.id);
-  //       setTasks(arrayMove(tasks, oldIndex, newIndex));
-  //     }
-  //   };
-  const onDragEnd = (event) => {
-    const { active, over } = event;
-    if (!over) return;
+  const fetchWorkOrder = async () => {
+    try {
+      let res = await axios.get(`${config.API_URL}/api/workorder/getWorkOrder`);
+      console.log(res);
 
-    const activeTask = tasks.find((task) => task.id === active.id);
-    const overTask = tasks.find((task) => task.id === over.id);
-
-    if (!activeTask || !overTask) return;
-
-    // If task is dropped in a different priority group
-    if (activeTask.priority !== overTask.priority) {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === activeTask.id
-            ? { ...task, priority: overTask.priority }
-            : task
-        )
-      );
-    } else {
-      // Reorder within the same priority group
-      const oldIndex = tasks.findIndex((task) => task.id === active.id);
-      const newIndex = tasks.findIndex((task) => task.id === over.id);
-      setTasks(arrayMove(tasks, oldIndex, newIndex));
+      setWorkOrders(res.data.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const groupedTasks = tasks.reduce((acc, task) => {
-    acc[task.priority] = acc[task.priority] || [];
-    acc[task.priority].push(task);
-    return acc;
-  }, {});
+  useEffect(() => {
+    fetchWorkOrder();
+  }, []);
+
+  // Function to generate random progress percentage for demo purposes
+  const getRandomProgress = () => {
+    return Math.floor(Math.random() * 100) + 1;
+  };
 
   return (
-    <div>
+    <div className="px-10">
       <div>
         <button
           onClick={() => navigate("createWorkOrder")}
@@ -138,25 +39,49 @@ const WorkflowBoard = () => {
           Create WorkOrder
         </button>
       </div>
-      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-        <div className="flex flex-col gap-4">
-          {Object.keys(groupedTasks)
-            .sort()
-            .map((priority) => (
-              <SortableContext
-                key={priority}
-                items={groupedTasks[priority]}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="flex gap-2">
-                  {groupedTasks[priority].map((task) => (
-                    <SortableItem key={task.id} task={task} />
-                  ))}
+      <div className="grid gap-4">
+        {workOrders.map((wo) => {
+          // Store the random progress value in a variable for each work order
+          const progressValue = getRandomProgress();
+
+          return (
+            <Link
+              to={`/workorder/${wo._id}`}
+              key={wo._id}
+              className="border rounded-lg p-4 hover:bg-gray-100"
+            >
+              <h3 className="text-lg font-semibold">{wo.workOrderNo}</h3>
+              <div className="flex justify-between">
+                <div>
+                  <p>
+                    Start: {new Date(wo.startTime).toLocaleString()} <br />
+                    End: {new Date(wo.endTime).toLocaleString()}
+                  </p>
                 </div>
-              </SortableContext>
-            ))}
-        </div>
-      </DndContext>
+                <div>
+                  <button className="px-2 py-1 text-white hover:bg-gray-500 rounded-md bg-gray-600">
+                    Add Data Entry
+                  </button>
+                </div>
+              </div>
+
+              {/* Progress Bar - using the local progressValue variable */}
+              <div className="mt-3">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Progress</span>
+                  <span className="text-sm font-medium">{progressValue}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${progressValue}%` }}
+                  ></div>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 };

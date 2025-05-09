@@ -129,7 +129,9 @@ const Sales = () => {
               "#ff1493": "Deep Pink",
               "#8b4513": "Brown",
             }, // Now contains availableStock for each size
-            image: product.images?.image1 || "https://via.placeholder.com/150",
+             image: product.images?.image1
+            ? `${config.API_URL}${product.images.image1}`
+            : "https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg",
             isSelected: false,
           };
         });
@@ -500,7 +502,7 @@ const Sales = () => {
                     </span>
                   )}
                   <img
-                    src={`${config.API_URL}${product.image}`}
+                    src={`${product.image}`}
                     alt={product.styleName}
                     className="w-full h-32 object-cover rounded"
                   />

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
 
-const Process = () => {
+const ProcessGallery = () => {
   const navigate = useNavigate();
   const [processes, setProcesses] = useState([]);
   const [selectedProcesses, setSelectedProcesses] = useState([]);
@@ -45,10 +45,6 @@ const Process = () => {
     }
   };
 
-  const handleEdit = (processId) => {
-    navigate(`editProcess/${processId}`);
-  };
-
   const filteredProcesses = processes.filter((process) =>
     process.processName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -57,12 +53,12 @@ const Process = () => {
     <div className="p-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
         <div className="flex gap-2">
-          <button
+          {/* <button
             onClick={() => navigate("addProcess")}
             className="px-4 py-2 bg-[#310b6b] text-white rounded"
           >
             Add Process
-          </button>
+          </button> */}
           <button
             onClick={handleDelete}
             disabled={selectedProcesses.length === 0}
@@ -87,7 +83,6 @@ const Process = () => {
             <th className="border border-gray-300 px-4 py-2">Process Name</th>
             <th className="border border-gray-300 px-4 py-2">Activities</th>
             <th className="border border-gray-300 px-4 py-2">Group</th>
-            <th className="border border-gray-300 px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -116,14 +111,6 @@ const Process = () => {
               <td className="border border-gray-300 px-4 py-2">
                 {process.group}
               </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                <button
-                  onClick={() => handleEdit(process._id)}
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Edit
-                </button>
-              </td>
             </tr>
           ))}
         </tbody>
@@ -132,4 +119,4 @@ const Process = () => {
   );
 };
 
-export default Process;
+export default ProcessGallery;

@@ -83,7 +83,9 @@ const ProductGallery = () => {
         return {
           ...product,
           sizes: Object.keys(sizesObject).length === 0 ? obj : sizesObject,
-          image: product.images?.image1 || "https://via.placeholder.com/150",
+          image: product.images?.image1
+            ? `${config.API_URL}${product.images.image1}`
+            : "https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg",
         };
       });
 
@@ -148,7 +150,7 @@ const ProductGallery = () => {
           >
             <div className="relative">
               <img
-                src={`${config.API_URL}${product.image}`}
+                src={`${product.image}`}
                 alt={product.styleName}
                 className="w-full h-40 object-cover rounded"
               />
