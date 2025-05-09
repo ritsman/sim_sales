@@ -20,8 +20,41 @@ export const getprocess = async(req,res)=>{
  }
 }
 
-export const updateProcess = async(req,res)=>{
+export const getProcessById = async(req,res)=>{
+  const {id} = req.params;
+   try {
+     const processes = await Process.findById(id);
+     res.status(200).json(processes);
+   } catch (error) {
+     res.status(500).json({ message: "Error fetching processes", error });
+   }
+}
 
+export const updateProcess = async(req,res)=>{
+  try {
+    const { processName, activities, group } = req.body;
+
+    // You might want to validate the input here
+
+    const updatedProcess = await Process.findByIdAndUpdate(
+      req.params.id,
+      {
+        processName,
+        activities,
+        group,
+        // You might want to add updatedAt: Date.now() if you track that
+      },
+      { new: true } // This returns the updated document
+    );
+
+    if (!updatedProcess) {
+      return res.status(404).json({ message: "Process not found" });
+    }
+
+    res.json(updatedProcess);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 export const deleteProcess = async(req,res)=>{

@@ -9,7 +9,7 @@ import { createParty, deleteParty, getParty, updateParty } from "../controllers/
 import { createUnit, deleteUnit, getUnit, updateUnit } from "../controllers/Master/Unit.controller.js";
 import { addItemStocks, createItems, deleteDetailedItemStockById, deleteItems, getDetailedItemStock, getDetailedItemStockById, getDetailedItemStockByItemId, getItems, getItemsById, getItemStock, getTotalStockByItemId, getTotalStockForAllItems, postDetailedItemStock, postItemStock, updateItems } from "../controllers/Master/Items.controller.js";
 import { addActivity, deleteActivity, getActivity, updateActivity } from "../controllers/Master/Activity.controller.js";
-import { addProcess, deleteProcess, getprocess, updateProcess } from "../controllers/Master/Process.controller.js";
+import { addProcess, deleteProcess, getprocess, getProcessById, updateProcess } from "../controllers/Master/Process.controller.js";
 import { createColor, deleteColor, getColor, updateColor } from "../controllers/Master/Color.controller.js";
 import { addSkuProduct, createSkuCollection, deleteSkuCollection, getSkuCollection, getSkuProduct, removeSkuProduct, updateSkuCollection } from "../controllers/Master/Sku.controller.js";
 import { createLocation, deleteLocation, getLocation, updateLocation } from "../controllers/Master/Location.controller.js";
@@ -122,6 +122,7 @@ router.delete("/deleteActivity/:id",deleteActivity)
 //process
 router.post("/addProcess", addProcess);
 router.get("/getProcess", getprocess);
+router.get("/getProcess/:id",getProcessById)
 router.put("/updateProcess/:id", updateProcess);
 router.delete("/deleteProcess/:id", deleteProcess);
 

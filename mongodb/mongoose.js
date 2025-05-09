@@ -18,7 +18,7 @@
 
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://0.0.0.0:27017/gems");
+mongoose.connect("mongodb://0.0.0.0:27017/sim-four");
 
 const db = mongoose.connection;
 
