@@ -1,7 +1,7 @@
 
 
 const config = {
-  API_URL: "http://localhost:3020",
+  API_URL: "https://s1.simranwebsoft.com/aysales",
 };
 
 export default config;
